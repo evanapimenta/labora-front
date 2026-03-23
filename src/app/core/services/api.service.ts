@@ -21,7 +21,7 @@ export class ApiService {
     }
 
     get accessToken(): string {
-        return this.access?.token;
+        return this.access?.accessToken;
     }
 
     /**

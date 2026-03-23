@@ -1,1 +1,124 @@
-<p>home works!</p>
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="lg:col-span-2">
+        <div class="panel border border-[#e0e6ed]">
+            <swiper-container
+                class="block h-64 sm:h-72 md:h-80"
+                slides-per-view="1"
+                navigation="true"
+                pagination-clickable="true"
+                pagination="true"
+                loop="true"
+            >
+                <swiper-slide *ngFor="let s of slides">
+                    <div class="h-full flex items-center justify-center">
+                        <img [src]="s" alt="banner" class="max-h-full max-w-full object-contain" />
+                    </div>
+                </swiper-slide>
+            </swiper-container>
+        </div>
+    </div>
+
+    <div class="lg:col-span-1">
+        <div class="panel border border-[#e0e6ed]">
+            <div class="flex gap-4">
+                <div class="flex flex-col items-center justify-center px-3 text-gray-400">
+                    <div class="text-2xl tracking-[0.4em]">{{ agendamento.mes }}</div>
+                    <div class="text-6xl leading-none font-extrabold">{{ agendamento.dia }}</div>
+                    <div class="text-lg mt-1">{{ agendamento.hora }}</div>
+                </div>
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold mb-2">{{ agendamento.exame }}</h3>
+                    <div class="space-y-1 text-xs text-gray-500">
+                        <div class="flex items-center gap-2">
+                            <icon-laboratory class="w-4 h-4 text-primary"></icon-laboratory>
+                            <span>{{ agendamento.laboratorio }} • {{ agendamento.unidade }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <icon-location class="w-4 h-4 text-primary"></icon-location>
+                            <span>{{ agendamento.endereco }}</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 flex gap-2">
+                        <button class="btn-aux">Preparo</button>
+                        <button class="btn-main">Reagendar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-2">
+        <div class="panel border border-[#e0e6ed]">
+            <div class="flex items-center justify-between mb-4">
+                <h4 class="font-semibold">Resultados Disponíveis</h4>
+                <button class="btn-aux">Ver Todos</button>
+            </div>
+            <div class="divide-y divide-[#e0e6ed]">
+                <div class="py-3 flex items-start justify-between" *ngFor="let r of resultados">
+                    <div class="flex gap-3">
+                        <div class="w-10 h-10 rounded border border-[#e0e6ed] text-gray-500 flex items-center justify-center" aria-hidden="true">
+                            <icon-file class="w-6 h-6"></icon-file>
+                        </div>
+                        <div>
+                            <h5 class="font-semibold">{{ r.titulo }}</h5>
+                            <p class="text-xs text-gray-500">
+                                {{ r.laboratorio }} • {{ r.unidade }}<br />
+                                {{ r.data }}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 text-gray-500">
+                        <button class="hover:text-primary" title="Imprimir" aria-label="Imprimir">
+                            <icon-printer class="w-5 h-5"></icon-printer>
+                        </button>
+                        <button class="hover:text-primary" title="Download" aria-label="Download">
+                            <icon-download class="w-5 h-5"></icon-download>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lg:col-span-1">
+        <div class="panel border border-[#e0e6ed]">
+            <h4 class="font-semibold mb-4">Agendamento Rápido</h4>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-500 mb-1 block">Local</label>
+                    <ng-select
+                        [items]="locais"
+                        bindLabel="nome"
+                        [(ngModel)]="localSelecionado"
+                        placeholder="Qual a cidade mais próxima?"
+                        class="custom-multiselect w-full"
+                    >
+                    </ng-select>
+                </div>
+
+                <div>
+                    <label class="text-xs text-gray-500 mb-1 block">Exame</label>
+                    <ng-select
+                        [items]="exames"
+                        bindLabel="nome"
+                        [(ngModel)]="exameSelecionado"
+                        placeholder="Qual exame procura?"
+                        class="custom-multiselect w-full"
+                    >
+                    </ng-select>
+                </div>
+
+                <div class="flex justify-end">
+                    <button class="btn-main flex items-center gap-2">
+                        Buscar
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M5 12h14" stroke-width="1.5" />
+                            <path d="M13 5l7 7-7 7" stroke-width="1.5" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -17,7 +17,7 @@
 
   <div *ngIf="filteredLaboratories.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
     <div
-      *ngFor="let laboratory of filteredLaboratories"
+      *ngFor="let laboratory of laboratories"
       class="bg-white shadow-[4px_6px_10px_-3px_#bfc9d4] rounded border border-[#e0e6ed] dark:border-[#1b2e4b] dark:bg-[#191e3a] dark:shadow-none flex flex-col h-full">
       
       <div class="p-6">
@@ -48,13 +48,13 @@
                 <span class="font-bold text-gray-400">Endereço</span>
               </div>
               <div class="ml-6 space-y-1">
-                <p class="text-gray-400"><span class="font-semibold">Rua:</span> {{ laboratory.address_street }}, {{ laboratory.address_number }}</p>
-                <p class="text-gray-400" *ngIf="laboratory.address_complement"><span class="font-semibold">Complemento:</span> {{ laboratory.address_complement }}</p>
-                <p class="text-gray-400"><span class="font-semibold">Bairro:</span> {{ laboratory.address_neighborhood }}</p>
-                <p class="text-gray-400"><span class="font-semibold">Cidade:</span> {{ laboratory.address_city }}</p>
-                <p class="text-gray-400"><span class="font-semibold">Estado:</span> {{ laboratory.address_state }}</p>
-                <p class="text-gray-400"><span class="font-semibold">CEP:</span> {{ laboratory.address_postal_code }}</p>
-                <p class="text-gray-400"><span class="font-semibold">País:</span> {{ laboratory.address_country }}</p>
+                <p class="text-gray-400"><span class="font-semibold">Rua:</span> {{ laboratory.address.street }}, {{ laboratory.address.number }}</p>
+                <p class="text-gray-400" *ngIf="laboratory.address.complement"><span class="font-semibold">Complemento:</span> {{ laboratory.address.complement }}</p>
+                <p class="text-gray-400"><span class="font-semibold">Bairro:</span> {{ laboratory.address.neighborhood }}</p>
+                <p class="text-gray-400"><span class="font-semibold">Cidade:</span> {{ laboratory.address.city }}</p>
+                <p class="text-gray-400"><span class="font-semibold">Estado:</span> {{ laboratory.address.state }}</p>
+                <p class="text-gray-400"><span class="font-semibold">CEP:</span> {{ laboratory.address.zipCode }}</p>
+                <p class="text-gray-400"><span class="font-semibold">País:</span> {{ laboratory.address.country }}</p>
               </div>
             </div>
           </div>
@@ -66,7 +66,7 @@
               <div class="flex items-center">
                 <icon-phone class="w-4 h-4 text-primary mr-2"></icon-phone>
                 <span class="font-bold text-gray-400">Telefone:</span>
-                <span class="text-gray-400 ml-2">{{ laboratory.phone_number }}</span>
+                <span class="text-gray-400 ml-2">{{ laboratory.phoneNumber }}</span>
               </div>
             </div>
           </div>

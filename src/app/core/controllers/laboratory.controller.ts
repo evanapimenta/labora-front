@@ -8,6 +8,6 @@ export class LaboratoryController {
     constructor(private apiService: ApiService) { }
 
     getAll = () => {
-        return this.apiService.get(`labs`);
+        return this.apiService.get(`/labs`);
     }
 }
