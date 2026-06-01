@@ -1,10 +1,12 @@
-import { Component, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, Input, Output, EventEmitter, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { IconMenuComponent } from '../../icons/icon-menu';
 import { IconUserComponent } from '../../icons/icon-user';
 import { SearchInputComponent } from '../search-input/search-input.component';
 import { environment } from '../../../../environment';
+import { PatientController } from '../../core/controllers/patient.controller';
+import { UserController } from '../../core/controllers/user.controller';
 
 interface UserProfile {
   name: string;
@@ -16,11 +18,11 @@ interface UserProfile {
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, IconMenuComponent, IconUserComponent, SearchInputComponent],
+  imports: [CommonModule, IconMenuComponent, IconUserComponent, SearchInputComponent, RouterModule],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css'
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   @Input() sidebarCollapsed = false;
   @Output() sidebarToggle = new EventEmitter<void>();
   
@@ -28,13 +30,100 @@ export class HeaderComponent {
   isUserDropdownOpen = false;
   
   userProfile: UserProfile = {
-    name: 'Evana Pimenta',
-    email: 'evana.pimenta@icloud.com',
-    role: 'Administrador',
+    name: 'Carregando...',
+    email: '',
+    role: '',
     avatar: '/assets/images/profile.png'
   };
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private patientController: PatientController,
+    private userController: UserController
+  ) {}
+
+  ngOnInit(): void {
+    this.loadUserProfile();
+  }
+
+  loadUserProfile() {
+    const tokenPayload = this.getDecodedToken();
+    if (!tokenPayload || !tokenPayload.id) {
+      this.userProfile.name = 'Não conectado';
+      return;
+    }
+
+    const userId = tokenPayload.id;
+    const tokenRole = tokenPayload.role || '';
+    this.userProfile.role = this.mapRole(tokenRole);
+
+    // Tentar carregar dados do paciente
+    this.patientController.getById(userId).subscribe({
+      next: (patient: any) => {
+        this.userProfile.name = patient.userInfoDTO?.name || 'Sem nome';
+        this.userProfile.email = patient.userInfoDTO?.email || '';
+        this.userProfile.avatar = this.getAvatarUrl(patient.userInfoDTO?.imagePathUrl);
+      },
+      error: (err: any) => {
+        console.warn('Erro ao carregar paciente no header, tentando usuário genérico:', err);
+        // Tentar carregar dados do usuário genérico (Administradores)
+        this.userController.getById(userId).subscribe({
+          next: (user: any) => {
+            this.userProfile.name = user.name || 'Sem nome';
+            this.userProfile.email = user.email || '';
+            this.userProfile.avatar = this.getAvatarUrl(user.imagePathUrl);
+          },
+          error: (userErr: any) => {
+            console.error('Erro ao carregar usuário no header:', userErr);
+            this.userProfile.name = 'Erro ao carregar';
+          }
+        });
+      }
+    });
+  }
+
+  getDecodedToken(): any {
+    if (typeof window === 'undefined' || !window.localStorage) return null;
+    const accessStr = localStorage.getItem('access');
+    if (!accessStr) return null;
+    try {
+      const accessObj = JSON.parse(accessStr);
+      const token = accessObj.accessToken;
+      if (!token) return null;
+      const parts = token.split('.');
+      if (parts.length !== 3) return null;
+      const decoded = atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'));
+      return JSON.parse(decoded);
+    } catch (e) {
+      console.error('Error decoding token in header:', e);
+      return null;
+    }
+  }
+
+  mapRole(role: string): string {
+    if (!role) return 'Usuário';
+    if (role === 'PATIENT') return 'Paciente';
+    if (role === 'ADMIN') return 'Administrador';
+    if (role === 'SUPER_ADMIN') return 'Super Administrador';
+    return role;
+  }
+
+  getAvatarUrl(imagePath: string | null | undefined): string {
+    if (imagePath) {
+      if (imagePath.startsWith('/images/profile/')) {
+        return `http://localhost:8080${imagePath}`;
+      }
+      return imagePath;
+    }
+    return '/assets/images/profile.png';
+  }
+
+  getUserInitials(): string {
+    if (!this.userProfile.name || this.userProfile.name === 'Carregando...') return '?';
+    const parts = this.userProfile.name.trim().split(' ');
+    if (parts.length === 1) return parts[0][0].toUpperCase();
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+  }
 
   onSidebarToggle() {
     this.sidebarToggle.emit();

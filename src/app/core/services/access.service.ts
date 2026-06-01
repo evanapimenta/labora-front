@@ -10,11 +10,16 @@ export class AccessService {
   _authenticated = false;
 
   get access() {
-    const access = localStorage.getItem('access');
-    return access ? JSON.parse(access) : null;
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const access = localStorage.getItem('access');
+      return access ? JSON.parse(access) : null;
+    }
+    return null;
   }
 
   set access(value: any) {
-    localStorage.setItem('access', JSON.stringify(value));
+    if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.setItem('access', JSON.stringify(value));
+    }
   }
 }

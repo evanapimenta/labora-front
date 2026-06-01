@@ -23,11 +23,11 @@
                         <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Cadastro</h1>
                         <p class="text-base font-bold leading-normal text-white-dark">Informe seus dados para criar uma conta</p>
                     </div>
-                    <form class="space-y-5 dark:text-white">
+                    <form class="space-y-5 dark:text-white my-10" [formGroup]="form" (submit)="register()">
                         <div>
                             <label for="Name">Nome</label>
                             <div class="relative text-white-dark">
-                                <input id="Name" type="text" placeholder="Digite seu nome" class="form-input ps-10 placeholder:text-white-dark" />
+                                <input formControlName="name" id="Name" type="text" placeholder="Digite seu nome" class="form-input ps-10 placeholder:text-white-dark" />
                                 <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                     <icon-user [fill]="false" />
                                 </span>
@@ -36,7 +36,7 @@
                         <div>
                             <label for="Email">Email</label>
                             <div class="relative text-white-dark">
-                                <input id="Email" type="email" placeholder="Digite o Email" class="form-input ps-10 placeholder:text-white-dark" />
+                                <input formControlName="email" id="Email" type="email" placeholder="Digite o Email" class="form-input ps-10 placeholder:text-white-dark" />
                                 <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                     <icon-mail [fill]="false" />
                                 </span>
@@ -45,14 +45,23 @@
                         <div>
                             <label for="Password">Senha</label>
                             <div class="relative text-white-dark">
-                                <input id="Password" type="password" placeholder="Digite a Senha" class="form-input ps-10 placeholder:text-white-dark" />
+                                <input formControlName="password" id="Password" type="password" placeholder="Digite a Senha" class="form-input ps-10 placeholder:text-white-dark" />
+                                <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                    <icon-lock-dots [fill]="false" />
+                                </span>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="ConfirmPassword">Confirmar Senha</label>
+                            <div class="relative text-white-dark">
+                                <input formControlName="confirmPassword" id="ConfirmPassword" type="password" placeholder="Confirme a Senha" class="form-input ps-10 placeholder:text-white-dark" />
                                 <span class="absolute start-4 top-1/2 -translate-y-1/2">
                                     <icon-lock-dots [fill]="false" />
                                 </span>
                             </div>
                         </div>
                         <button type="submit" class="btn bg-primary text-white !mt-6 w-full border-0 uppercase">
-                            Entrar
+                            Cadastrar
                         </button>
                     </form>
 

@@ -4,6 +4,9 @@ import { IconMailComponent } from '../icons/icon-mail';
 import { IconLockDotsComponent } from '../icons/icon-lock-dots';
 import { IconCaretsDownComponent } from '../icons/icon-carets-down';
 import { IconHomeComponent } from '../icons/icon-home';
+import { IconFileComponent } from '../icons/icon-file';
+import { IconLaboratoryComponent } from '../icons/icon-laboratory';
+import { IconSearchComponent } from '../icons/icon-search';
 
 export interface MenuItem {
   link: string;
@@ -19,6 +22,9 @@ export const ICON_REGISTRY: { [key: string]: any } = {
   'icon-lock-dots': IconLockDotsComponent,
   'icon-carets-down': IconCaretsDownComponent,
   'icon-home': IconHomeComponent,
+  'icon-file': IconFileComponent,
+  'icon-laboratory': IconLaboratoryComponent,
+  'icon-search': IconSearchComponent,
 };
 
 export const MENU_ITEMS: MenuItem[] = [
@@ -32,6 +38,12 @@ export const MENU_ITEMS: MenuItem[] = [
         keys: [ENUM_PAGES.home],
         icon: 'icon-home',
         label: 'Bem-vindo',
+      },
+      {
+        link: '/schedule',
+        keys: [ENUM_PAGES.schedule],
+        icon: 'icon-search',
+        label: 'Agendar',
       },
     ],
   },
@@ -49,7 +61,7 @@ export const MENU_ITEMS: MenuItem[] = [
       {
         link: '/exams',
         keys: [ENUM_PAGES.exams],
-        icon: 'icon-user',
+        icon: 'icon-file',
         label: 'Exames',
       },
     ],
@@ -62,7 +74,7 @@ export const MENU_ITEMS: MenuItem[] = [
         {
             link: '/laboratories',
             keys: [ENUM_PAGES.laboratories],
-            icon: 'icon-user',
+            icon: 'icon-laboratory',
             label: 'Laboratórios',
         }
     ]

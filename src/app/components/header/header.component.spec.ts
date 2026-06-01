@@ -1,19 +1,28 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { Router } from '@angular/router';
 import { HeaderComponent } from './header.component';
+import { PatientController } from '../../core/controllers/patient.controller';
+import { UserController } from '../../core/controllers/user.controller';
+import { of } from 'rxjs';
 
 describe('HeaderComponent', () => {
   let component: HeaderComponent;
   let fixture: ComponentFixture<HeaderComponent>;
   let mockRouter: jasmine.SpyObj<Router>;
+  let mockPatientController: jasmine.SpyObj<PatientController>;
+  let mockUserController: jasmine.SpyObj<UserController>;
 
   beforeEach(async () => {
     const routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+    const patientSpy = jasmine.createSpyObj('PatientController', ['getById']);
+    const userSpy = jasmine.createSpyObj('UserController', ['getById']);
 
     await TestBed.configureTestingModule({
       imports: [HeaderComponent],
       providers: [
-        { provide: Router, useValue: routerSpy }
+        { provide: Router, useValue: routerSpy },
+        { provide: PatientController, useValue: patientSpy },
+        { provide: UserController, useValue: userSpy }
       ]
     })
     .compileComponents();
@@ -21,6 +30,8 @@ describe('HeaderComponent', () => {
     fixture = TestBed.createComponent(HeaderComponent);
     component = fixture.componentInstance;
     mockRouter = TestBed.inject(Router) as jasmine.SpyObj<Router>;
+    mockPatientController = TestBed.inject(PatientController) as jasmine.SpyObj<PatientController>;
+    mockUserController = TestBed.inject(UserController) as jasmine.SpyObj<UserController>;
   });
 
   it('should create', () => {
@@ -49,11 +60,9 @@ describe('HeaderComponent', () => {
     expect(component.isUserDropdownOpen).toBeFalse();
   });
 
-  it('should have default user profile data', () => {
-    expect(component.userProfile.name).toBe('Evana Pimenta');
-    expect(component.userProfile.email).toBe('evana.pimenta@icloud.com');
-    expect(component.userProfile.role).toBe('Administrador');
-    expect(component.userProfile.avatar).toBe('/assets/images/profile.png');
+  it('should have initial user profile data structure', () => {
+    expect(component.userProfile.name).toBeDefined();
+    expect(component.userProfile.avatar).toContain('profile.png');
   });
 
   it('should handle search change events', () => {

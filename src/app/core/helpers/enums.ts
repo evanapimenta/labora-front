@@ -5,6 +5,7 @@ export enum ENUM_PAGES {
   exams = 'exams',
   laboratories = 'laboratories',
   management = 'management',
+  schedule = 'schedule',
 }
 
 export enum ENUM_STATUS {}

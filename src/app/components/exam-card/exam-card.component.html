@@ -1,0 +1,64 @@
+<div *ngIf="!isSummaryMode; else summaryTmpl" 
+     (click)="onSelect()"
+     [class]="'panel border p-5 cursor-pointer rounded-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_10px_20px_-10px_rgba(0,0,0,0.1)] flex flex-col justify-between h-full bg-white dark:bg-[#191e3a] ' + 
+              (isSelected ? 'border-primary bg-primary/5 shadow-primary/5' : 'border-[#e0e6ed] dark:border-[#1b2e4b]')">
+  
+  <div>
+    <h6 class="font-extrabold text-gray-800 dark:text-white-light text-[15px] uppercase tracking-wide transition-colors duration-300"
+        [ngClass]="isSelected ? 'text-primary' : ''">
+      {{ exam?.name }}
+    </h6>
+    
+    <div class="mt-1.5">
+      <span class="text-[10px] px-2 py-0.5 rounded-full font-bold inline-block"
+            [ngClass]="exam?.testCategory === 'GENETICO' ? 'bg-info/10 text-info' : 'bg-primary/10 text-primary'">
+        {{ exam?.testCategory === 'GENETICO' ? 'Genética' : 'Fertilidade' }}
+      </span>
+    </div>
+    
+    <hr class="my-3.5 border-[#e0e6ed] dark:border-[#1b2e4b]" />
+    
+    <p class="text-gray-400 dark:text-gray-400 text-xs leading-relaxed line-clamp-3 mb-5">{{ exam?.description }}</p>
+  </div>
+  
+  <div *ngIf="showActions" class="flex justify-between items-center mt-auto">
+    <button 
+      type="button" 
+      class="text-[11px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] px-3 py-1 rounded hover:bg-gray-50 dark:hover:bg-[#121e32] text-gray-500 dark:text-gray-400 transition-colors pointer-events-none">
+      Descrição
+    </button>
+    
+    <button 
+      type="button" 
+      (click)="$event.stopPropagation(); onSelect()"
+      class="text-[11px] font-bold px-3 py-1 rounded transition-all duration-300"
+      [ngClass]="isSelected ? 'bg-primary text-white' : 'border border-primary text-primary hover:bg-primary hover:text-white'">
+      Agendar
+    </button>
+  </div>
+</div>
+
+<ng-template #summaryTmpl>
+  <div class="panel border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#0e1726] p-4.5 rounded-lg flex justify-between items-center h-22 w-full animate__animated animate__fadeIn">
+    <div>
+      <h6 class="font-extrabold text-gray-800 dark:text-white-light text-[15px] uppercase tracking-wide">
+        {{ exam?.name }}
+      </h6>
+      <div class="mt-1.5">
+        <span class="text-[10px] px-2 py-0.5 rounded-full font-bold inline-block"
+              [ngClass]="exam?.testCategory === 'GENETICO' ? 'bg-info/10 text-info' : 'bg-primary/10 text-primary'">
+          {{ exam?.testCategory === 'GENETICO' ? 'Genética' : 'Fertilidade' }}
+        </span>
+      </div>
+    </div>
+    <div class="flex flex-col gap-1.5">
+      <button type="button" class="text-[11px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] px-3 py-1 rounded hover:bg-gray-50 dark:hover:bg-[#121e32] text-gray-500 dark:text-gray-400 transition-colors pointer-events-none">
+        Descrição
+      </button>
+      <button type="button" (click)="onChange()" class="text-[10px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] px-2 py-0.5 rounded hover:bg-gray-50 dark:hover:bg-[#121e32] text-gray-500 dark:text-gray-400 transition-colors">
+        Alterar
+      </button>
+    </div>
+  </div>
+</ng-template>
+

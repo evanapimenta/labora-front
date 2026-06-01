@@ -1,0 +1,59 @@
+<div *ngIf="!isSummaryMode; else summaryTmpl"
+     (click)="onSelect()"
+     class="panel border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#0e1726] p-5 cursor-pointer rounded-lg shadow-sm hover:-translate-y-1 hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full hover:border-primary">
+  
+  <div>
+    <div class="flex justify-between items-start mb-3">
+      <div>
+        <h6 class="font-extrabold text-gray-800 dark:text-white-light text-sm uppercase">
+          {{ branch?.name }}
+        </h6>
+        <div class="text-[11px] text-gray-500 mt-0.5">{{ branch?.city }}</div>
+      </div>
+      <div class="flex items-center gap-1 text-[11px] font-bold text-gray-400">
+        <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        {{ branch?.distance }}
+      </div>
+    </div>
+
+    <hr class="my-3 border-[#e0e6ed] dark:border-[#1b2e4b]" />
+    
+    <p class="text-xs text-gray-400 leading-relaxed mb-4">
+      <strong class="text-gray-500">Endereço</strong><br/>
+      {{ branch?.street }}, {{ branch?.number }} - {{ branch?.neighborhood }}
+    </p>
+  </div>
+
+  <div class="flex justify-between items-center mt-auto border-t border-[#e0e6ed] dark:border-[#1b2e4b] pt-3">
+    <div class="text-[11px] text-gray-400">
+      Prox. Data Disponível: <span class="font-bold text-gray-700 dark:text-gray-300">{{ branch?.available }}</span>
+    </div>
+    <button type="button" class="btn btn-outline-primary rounded-full w-8 h-8 p-0 flex items-center justify-center transition-all duration-300">
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+        <polyline points="12 5 19 12 12 19"></polyline>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<ng-template #summaryTmpl>
+  <div class="panel border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#0e1726] p-4.5 rounded-lg flex justify-between items-center h-22 w-full animate__animated animate__fadeIn">
+    <div>
+      <h6 class="font-extrabold text-gray-800 dark:text-white-light text-[15px] uppercase tracking-wide">
+        {{ branch?.name }}
+      </h6>
+      <div class="text-[12px] text-gray-500 font-semibold mt-1">
+        {{ branch?.city }}
+      </div>
+    </div>
+    <div>
+      <button type="button" (click)="onChange()" class="text-[10px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] px-2 py-0.5 rounded hover:bg-gray-50 dark:hover:bg-[#121e32] text-gray-500 dark:text-gray-400 transition-colors">
+        Alterar
+      </button>
+    </div>
+  </div>
+</ng-template>
