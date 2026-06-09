@@ -15,6 +15,7 @@ export class ExamCardComponent {
 
   @Output() select = new EventEmitter<void>();
   @Output() change = new EventEmitter<void>();
+  @Output() viewDetails = new EventEmitter<void>();
 
   onSelect() {
     this.select.emit();
@@ -22,5 +23,10 @@ export class ExamCardComponent {
 
   onChange() {
     this.change.emit();
+  }
+
+  onViewDetails(event: Event) {
+    event.stopPropagation();
+    this.viewDetails.emit();
   }
 }

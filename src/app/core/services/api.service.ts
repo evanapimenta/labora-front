@@ -57,6 +57,12 @@ export class ApiService {
             .pipe(timeout(this.timeout), catchError(this.catchError));
     }
 
+    delete(url: string, auth: boolean = true): Observable<any> {
+        return this._httpClient
+            .delete<any>(`${this._urlService}${url}`, this.getHeader(auth, false))
+            .pipe(timeout(this.timeout), catchError(this.catchError));
+    }
+
     private getHeader(auth: boolean, isJson: boolean) {
         let hh: any = {};
         if (this.accessToken && auth) {

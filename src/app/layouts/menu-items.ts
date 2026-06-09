@@ -66,17 +66,4 @@ export const MENU_ITEMS: MenuItem[] = [
       },
     ],
   },
-  {
-    link: '#',
-    keys: [ENUM_PAGES.management],
-    label: 'Gerenciamento',
-    subItems: [
-        {
-            link: '/laboratories',
-            keys: [ENUM_PAGES.laboratories],
-            icon: 'icon-laboratory',
-            label: 'Laboratórios',
-        }
-    ]
-  },
 ];

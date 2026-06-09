@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -8,19 +8,24 @@ import { ScheduleController } from '../../core/controllers/schedule.controller';
 import { SearchInputComponent } from '../../components/search-input/search-input.component';
 import { ExamCardComponent } from '../../components/exam-card/exam-card.component';
 import { BranchCardComponent } from '../../components/branch-card/branch-card.component';
+import { NgxCustomModalComponent } from 'ngx-custom-modal';
 
 @Component({
   selector: 'app-schedule',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchInputComponent, ExamCardComponent, BranchCardComponent],
+  imports: [CommonModule, FormsModule, SearchInputComponent, ExamCardComponent, BranchCardComponent, NgxCustomModalComponent],
   templateUrl: './schedule.component.html'
 })
 export class ScheduleComponent implements OnInit {
+
+  @ViewChild('detailsModal') detailsModal!: any;
 
   currentStep = 1;
   bookingSuccess = false;
   bookingError: string | null = null;
   loading = false;
+
+  selectedExamForDetails: any = null;
 
   examsData: any[] = [];
   private _examSearchQuery = '';
@@ -30,6 +35,9 @@ export class ScheduleComponent implements OnInit {
   set examSearchQuery(val: string) {
     this._examSearchQuery = val;
     this.currentPage = 1;
+    if (!val.trim()) {
+      this.loadExams();
+    }
   }
 
   selectedExamObject: any = null;
@@ -59,12 +67,16 @@ export class ScheduleComponent implements OnInit {
     'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
   ];
 
+  isBrowser = false;
+
   constructor(
     private testController: TestController,
     private laboratoryController: LaboratoryController,
     private scheduleController: ScheduleController,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
@@ -73,13 +85,11 @@ export class ScheduleComponent implements OnInit {
   }
 
 
-  get totalPages(): number {
-    return Math.ceil(this.filteredExams.length / this.pageSize);
-  }
+  totalPages = 0;
+  totalElements = 0;
 
   get pagedExams(): any[] {
-    const start = (this.currentPage - 1) * this.pageSize;
-    return this.filteredExams.slice(start, start + this.pageSize);
+    return this.examsData;
   }
 
   get pageNumbers(): number[] {
@@ -93,25 +103,31 @@ export class ScheduleComponent implements OnInit {
   goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
+      this.loadExams();
     }
   }
 
   prevPage() {
     if (this.currentPage > 1) {
       this.currentPage--;
+      this.loadExams();
     }
   }
 
   nextPage() {
     if (this.currentPage < this.totalPages) {
       this.currentPage++;
+      this.loadExams();
     }
   }
 
   loadExams(): void {
-    this.testController.getAll().subscribe({
+    const pageIndex = this.currentPage - 1;
+    this.testController.getAll(pageIndex, this.pageSize, this.examSearchQuery).subscribe({
       next: (res: any) => {
-        this.examsData = Array.isArray(res) ? res : (res.content || []);
+        this.examsData = res.content || [];
+        this.totalPages = res.totalPages || 0;
+        this.totalElements = res.totalElements || 0;
       },
       error: (err: any) => {
         console.error('Erro ao carregar exames do backend:', err);
@@ -119,19 +135,13 @@ export class ScheduleComponent implements OnInit {
     });
   }
 
-  get filteredExams() {
-    if (!this.examSearchQuery.trim()) {
-      return this.examsData;
-    }
-    const term = this.examSearchQuery.toLowerCase();
-    return this.examsData.filter(exam => 
-      exam.name.toLowerCase().includes(term) || 
-      (exam.description && exam.description.toLowerCase().includes(term))
-    );
+  get filteredExams(): any[] {
+    return this.examsData;
   }
 
   onSearchClick() {
     this.currentPage = 1;
+    this.loadExams();
   }
 
   selectExam(exam: any) {
@@ -478,5 +488,15 @@ export class ScheduleComponent implements OnInit {
     this.bookingSuccess = false;
     this.bookingError = null;
     this.currentStep = 1;
+  }
+
+  openDetails(exam: any) {
+    this.selectedExamForDetails = exam;
+    this.detailsModal.open();
+  }
+
+  closeDetailsModal() {
+    this.detailsModal.close();
+    this.selectedExamForDetails = null;
   }
 }

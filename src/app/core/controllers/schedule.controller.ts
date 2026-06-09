@@ -10,4 +10,12 @@ export class ScheduleController {
     create = (data: any) => {
         return this.apiService.post('schedule', data);
     }
+
+    getScheduled = () => {
+        return this.apiService.get('/schedule/me');
+    }
+
+    getCompleted = () => {
+        return this.apiService.get('/schedule/me/completed');
+    }
 }

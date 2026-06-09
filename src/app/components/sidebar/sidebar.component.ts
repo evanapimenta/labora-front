@@ -66,7 +66,6 @@ export class SidebarComponent implements OnInit, AfterViewInit {
     }
 
     getFilteredMenu(): MenuItem[] {
-        // Por enquanto, retornar todos os itens do menu
         return MENU_ITEMS;
     }
 

@@ -3,8 +3,6 @@ export enum ENUM_PAGES {
   user = 'user',
   profile = 'profile',
   exams = 'exams',
-  laboratories = 'laboratories',
-  management = 'management',
   schedule = 'schedule',
 }
 

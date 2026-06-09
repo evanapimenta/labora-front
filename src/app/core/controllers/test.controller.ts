@@ -7,7 +7,11 @@ import { ApiService } from '../services/api.service';
 export class TestController {
     constructor(private apiService: ApiService) { }
 
-    getAll = (size: number = 100) => {
-        return this.apiService.get(`/tests?size=${size}`);
+    getAll = (page: number = 0, size: number = 6, search: string = '') => {
+        let url = `/tests?page=${page}&size=${size}`;
+        if (search.trim()) {
+            url += `&search=${encodeURIComponent(search.trim())}`;
+        }
+        return this.apiService.get(url);
     }
 }

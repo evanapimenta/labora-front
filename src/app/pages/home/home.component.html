@@ -1,17 +1,35 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <div class="lg:col-span-2">
-        <div class="panel border border-[#e0e6ed]">
+        <div class="panel p-0 overflow-hidden border border-[#e0e6ed] h-[340px] lg:h-[370px]">
             <swiper-container
-                class="block h-64 sm:h-72 md:h-80"
+                class="block h-full w-full"
                 slides-per-view="1"
                 navigation="true"
                 pagination-clickable="true"
                 pagination="true"
                 loop="true"
             >
-                <swiper-slide *ngFor="let s of slides">
-                    <div class="h-full flex items-center justify-center">
-                        <img [src]="s" alt="banner" class="max-h-full max-w-full object-contain" />
+                <swiper-slide *ngFor="let s of slides" class="h-full w-full">
+                    <div [class]="'h-full w-full flex items-center justify-between px-8 sm:px-12 md:px-16 relative overflow-hidden ' + s.bgColor">
+                        <!-- Left Text Content -->
+                        <div class="flex-1 text-left z-10 flex flex-col justify-center max-w-[65%] select-none pr-4">
+                            <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-extrabold text-white leading-tight mb-3 tracking-wide">
+                                {{ s.title }}
+                            </h2>
+                            <p class="text-xs sm:text-base lg:text-lg text-white/90 leading-relaxed mb-6 font-medium">
+                                {{ s.description }}
+                            </p>
+                            <div>
+                                <a [routerLink]="s.buttonLink" [class]="'inline-block px-6 py-2.5 border rounded-lg text-xs sm:text-sm lg:text-base font-semibold transition-all duration-300 ' + s.btnClass">
+                                    {{ s.buttonText }}
+                                </a>
+                            </div>
+                        </div>
+                        
+                        <!-- Right Illustration -->
+                        <div class="w-[30%] h-full flex items-end justify-end relative select-none">
+                            <img [src]="s.image" alt="banner" class="max-h-[92%] max-w-[130%] object-contain object-right-bottom transform translate-y-1 translate-x-2" />
+                        </div>
                     </div>
                 </swiper-slide>
             </swiper-container>
@@ -19,62 +37,81 @@
     </div>
 
     <div class="lg:col-span-1">
-        <div class="panel border border-[#e0e6ed]">
-            <div class="flex gap-4">
-                <div class="flex flex-col items-center justify-center px-3 text-gray-400">
-                    <div class="text-2xl tracking-[0.4em]">{{ agendamento.mes }}</div>
-                    <div class="text-6xl leading-none font-extrabold">{{ agendamento.dia }}</div>
-                    <div class="text-lg mt-1">{{ agendamento.hora }}</div>
-                </div>
-                <div class="flex-1">
-                    <h3 class="text-xl font-bold mb-2">{{ agendamento.exame }}</h3>
-                    <div class="space-y-1 text-xs text-gray-500">
-                        <div class="flex items-center gap-2">
-                            <icon-laboratory class="w-4 h-4 text-primary"></icon-laboratory>
-                            <span>{{ agendamento.laboratorio }} • {{ agendamento.unidade }}</span>
+        <div class="panel border border-[#e0e6ed] h-[340px] lg:h-[370px] flex flex-col">
+            <h4 class="font-semibold mb-4 text-base">Próximos Exames</h4>
+            
+            <!-- List wrapper -->
+            <div class="flex-1 flex flex-col gap-5 overflow-y-auto pr-1" *ngIf="agendamentos.length > 0">
+                <div class="flex gap-4 border-b border-[#e0e6ed] pb-4 last:border-b-0 last:pb-0" *ngFor="let a of agendamentos">
+                    <div class="flex flex-col items-center justify-center px-3 text-gray-400 min-w-[70px] bg-gray-50 dark:bg-black/10 rounded-lg py-2">
+                        <div class="text-xs tracking-[0.2em] font-bold uppercase text-primary">{{ formatDate(a.scheduledFor).mes }}</div>
+                        <div class="text-3xl leading-none font-extrabold text-gray-800 dark:text-white-light my-1">{{ formatDate(a.scheduledFor).dia }}</div>
+                        <div class="text-xs font-semibold text-gray-600 dark:text-gray-400">{{ formatDate(a.scheduledFor).hora }}</div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <h3 class="text-base font-bold text-gray-800 dark:text-white-dark mb-1 truncate" [title]="a.testName">{{ a.testName }}</h3>
+                        <div class="space-y-1 text-xs text-gray-500">
+                            <div class="flex items-center gap-2">
+                                <icon-laboratory class="w-3.5 h-3.5 text-primary flex-shrink-0"></icon-laboratory>
+                                <span class="font-medium text-gray-600 dark:text-gray-400 truncate">{{ a.branchName }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <icon-location class="w-3.5 h-3.5 text-primary flex-shrink-0"></icon-location>
+                                <span class="truncate" [title]="formatAddress(a.branchAddress)">{{ formatAddress(a.branchAddress) }}</span>
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <icon-location class="w-4 h-4 text-primary"></icon-location>
-                            <span>{{ agendamento.endereco }}</span>
+                        <div class="mt-3 flex gap-2">
+                            <button class="btn-aux py-1 px-3 text-xs">Preparo</button>
+                            <button class="btn-main py-1 px-3 text-xs">Reagendar</button>
                         </div>
                     </div>
-                    <div class="mt-4 flex gap-2">
-                        <button class="btn-aux">Preparo</button>
-                        <button class="btn-main">Reagendar</button>
-                    </div>
                 </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="flex-1 flex flex-col items-center justify-center py-8 text-gray-400" *ngIf="agendamentos.length === 0">
+                <icon-laboratory class="w-12 h-12 mb-2 text-gray-300 dark:text-gray-700"></icon-laboratory>
+                <p class="text-sm font-medium">Nenhum exame agendado</p>
             </div>
         </div>
     </div>
 
     <div class="lg:col-span-2">
-        <div class="panel border border-[#e0e6ed]">
-            <div class="flex items-center justify-between mb-4">
-                <h4 class="font-semibold">Resultados Disponíveis</h4>
-                <button class="btn-aux">Ver Todos</button>
-            </div>
-            <div class="divide-y divide-[#e0e6ed]">
-                <div class="py-3 flex items-start justify-between" *ngFor="let r of resultados">
-                    <div class="flex gap-3">
-                        <div class="w-10 h-10 rounded border border-[#e0e6ed] text-gray-500 flex items-center justify-center" aria-hidden="true">
-                            <icon-file class="w-6 h-6"></icon-file>
+        <div class="panel border border-[#e0e6ed] h-full flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-4">
+                    <h4 class="font-semibold text-base">Resultados Disponíveis</h4>
+                    <button class="btn-aux">Ver Todos</button>
+                </div>
+                <div class="divide-y divide-[#e0e6ed]" *ngIf="resultados.length > 0">
+                    <div class="py-3.5 flex items-start justify-between" *ngFor="let r of resultados">
+                        <div class="flex gap-3 min-w-0">
+                            <div class="w-10 h-10 rounded-lg border border-[#e0e6ed] text-primary flex items-center justify-center bg-primary/5 flex-shrink-0" aria-hidden="true">
+                                <icon-file class="w-5 h-5"></icon-file>
+                            </div>
+                            <div class="min-w-0">
+                                <h5 class="font-bold text-gray-800 dark:text-white-dark truncate" [title]="r.testName">{{ r.testName }}</h5>
+                                <p class="text-xs text-gray-500 mt-0.5">
+                                    <span class="font-medium">{{ r.branchName }}</span><br />
+                                    {{ getFormattedDateTime(r.scheduledFor) }}
+                                </p>
+                            </div>
                         </div>
-                        <div>
-                            <h5 class="font-semibold">{{ r.titulo }}</h5>
-                            <p class="text-xs text-gray-500">
-                                {{ r.laboratorio }} • {{ r.unidade }}<br />
-                                {{ r.data }}
-                            </p>
+                        <div class="flex items-center gap-3 text-gray-500 flex-shrink-0 pl-2">
+                            <button (click)="printResult(r.resultUrl)" class="hover:text-primary p-1 rounded hover:bg-gray-100 dark:hover:bg-black/20 transition-colors" title="Imprimir" aria-label="Imprimir" *ngIf="r.resultUrl">
+                                <icon-printer class="w-5 h-5"></icon-printer>
+                            </button>
+                            <a [href]="r.resultUrl" target="_blank" class="hover:text-primary p-1 rounded hover:bg-gray-100 dark:hover:bg-black/20 transition-colors flex items-center justify-center" title="Download" aria-label="Download" *ngIf="r.resultUrl">
+                                <icon-download class="w-5 h-5"></icon-download>
+                            </a>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 text-gray-500">
-                        <button class="hover:text-primary" title="Imprimir" aria-label="Imprimir">
-                            <icon-printer class="w-5 h-5"></icon-printer>
-                        </button>
-                        <button class="hover:text-primary" title="Download" aria-label="Download">
-                            <icon-download class="w-5 h-5"></icon-download>
-                        </button>
-                    </div>
+                </div>
+
+                <!-- Empty State -->
+                <div class="flex flex-col items-center justify-center py-12 text-gray-400" *ngIf="resultados.length === 0">
+                    <icon-file class="w-12 h-12 mb-2 text-gray-300 dark:text-gray-700"></icon-file>
+                    <p class="text-sm font-medium">Nenhum resultado disponível</p>
                 </div>
             </div>
         </div>
