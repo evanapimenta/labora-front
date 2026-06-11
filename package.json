@@ -34,6 +34,7 @@
     "nouislider": "^15.7.1",
     "quill": "^2.0.2",
     "rxjs": "~7.8.0",
+    "sweetalert2": "^11.26.25",
     "swiper": "^11.1.9",
     "tippy.js": "^6.3.7",
     "tslib": "^2.3.0",

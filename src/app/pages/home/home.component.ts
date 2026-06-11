@@ -11,10 +11,14 @@ import { IconPrinterComponent } from '../../icons/icon-printer';
 import { IconDownloadComponent } from '../../icons/icon-download';
 import { IconShareComponent } from '../../icons/icon-share';
 import { ScheduleController } from '../../core/controllers/schedule.controller';
+import { AccessService } from '../../core/services/access.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
+  host: {
+    'ngSkipHydration': 'true'
+  },
   imports: [
     CommonModule,
     FormsModule,
@@ -79,12 +83,17 @@ export class HomeComponent implements OnInit {
   localSelecionado: any = null;
   exameSelecionado: any = null;
 
-  constructor(private scheduleController: ScheduleController) {
+  constructor(
+    private scheduleController: ScheduleController,
+    private accessService: AccessService
+  ) {
     register();
   }
 
   ngOnInit(): void {
-    this.loadSchedules();
+    if (this.accessService.access?.accessToken) {
+      this.loadSchedules();
+    }
   }
 
   loadSchedules() {

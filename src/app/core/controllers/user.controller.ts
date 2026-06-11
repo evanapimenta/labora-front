@@ -14,4 +14,16 @@ export class UserController {
     update = (id: string, data: any) => {
         return this.apiService.put(`/users/${id}`, data);
     }
+
+    changePassword = (id: string, data: any) => {
+        return this.apiService.put(`/users/${id}/change-password`, data);
+    }
+
+    verifyAccount = (code: string) => {
+        return this.apiService.get(`/users/verify-account?code=${code}`, undefined, false);
+    }
+
+    updateSettings = (id: string, settings: any) => {
+        return this.apiService.put(`/users/${id}/settings`, settings);
+    }
 }

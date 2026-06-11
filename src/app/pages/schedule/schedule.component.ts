@@ -9,6 +9,7 @@ import { SearchInputComponent } from '../../components/search-input/search-input
 import { ExamCardComponent } from '../../components/exam-card/exam-card.component';
 import { BranchCardComponent } from '../../components/branch-card/branch-card.component';
 import { NgxCustomModalComponent } from 'ngx-custom-modal';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-schedule',
@@ -73,7 +74,8 @@ export class ScheduleComponent implements OnInit {
     private testController: TestController,
     private laboratoryController: LaboratoryController,
     private scheduleController: ScheduleController,
-    @Inject(PLATFORM_ID) private platformId: Object
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private notificationService: NotificationService
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
@@ -452,6 +454,7 @@ export class ScheduleComponent implements OnInit {
   confirmAppointment() {
     if (!this.selectedExamObject || !this.selectedBranchObject || !this.selectedDate || !this.selectedTime) {
       this.bookingError = 'Por favor, certifique-se de que todos os dados do agendamento foram selecionados.';
+      this.notificationService.error(this.bookingError);
       return;
     }
 
@@ -470,10 +473,13 @@ export class ScheduleComponent implements OnInit {
       next: (res: any) => {
         this.bookingSuccess = true;
         this.loading = false;
+        this.notificationService.success('Exame agendado com sucesso!');
       },
       error: (err: any) => {
         console.error('Erro ao salvar agendamento no backend:', err);
         this.bookingError = err?.message || 'Falha ao confirmar o agendamento. Por favor, tente novamente.';
+        const toastMsg = this.notificationService.getErrorMsg(err);
+        this.notificationService.error(toastMsg);
         this.loading = false;
       }
     });

@@ -4,6 +4,7 @@ import { IconLockDotsComponent } from '../../../icons/icon-lock-dots';
 import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthController } from '../../../core/controllers/auth.controller';
+import { NotificationService } from '../../../core/services/notification.service';
 
 
 @Component({
@@ -14,7 +15,11 @@ import { AuthController } from '../../../core/controllers/auth.controller';
   styleUrl: './sign-in.component.css'
 })
 export class SignInComponent {
-  constructor(private authController: AuthController, private router: Router){}
+  constructor(
+    private authController: AuthController, 
+    private router: Router,
+    private notificationService: NotificationService
+  ){}
 
   form!: UntypedFormGroup;
   ngOnInit(): void {
@@ -29,8 +34,16 @@ export class SignInComponent {
  }
 
  login = () => {
+  if (this.form.invalid) {
+    this.notificationService.error('Por favor, preencha o e-mail e a senha corretamente.');
+    return;
+  }
   this.authController.login(this.form.value).then((resp: any) => {
+    this.notificationService.success('Conectado com sucesso!');
     this.router.navigate(['/']);
-  })
+  }).catch((err: any) => {
+    const errorMsg = this.notificationService.getErrorMsg(err);
+    this.notificationService.error(errorMsg);
+  });
  }
 }

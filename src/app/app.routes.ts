@@ -2,16 +2,20 @@ import { Routes } from '@angular/router';
 import { HomeComponent } from './pages/home/home.component';
 import { SignInComponent } from './pages/auth/sign-in/sign-in.component';
 import { SignUpComponent } from './pages/auth/sign-up/sign-up.component';
+import { VerifyEmailComponent } from './pages/auth/verify-email/verify-email.component';
+import { RegisterPatientComponent } from './pages/auth/register-patient/register-patient.component';
 import { AppLayoutComponent } from './layouts/app/app';
 import { UserExamsComponent } from './pages/user-exams/user-exams.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
+import { SettingsComponent } from './pages/settings/settings.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
     {
         path: '',
         component: AppLayoutComponent,
+        canActivate: [authGuard],
         children: [
             {
                 path: '',
@@ -20,18 +24,19 @@ export const routes: Routes = [
             },
             {   
                 path: 'profile',
-                component: UserProfileComponent,
-                canActivate: [authGuard]
+                component: UserProfileComponent
             },
             {
                 path: 'schedule',
-                component: ScheduleComponent,
-                canActivate: [authGuard]
+                component: ScheduleComponent
             },
             {
                 path: 'exams',
-                component: UserExamsComponent,
-                canActivate: [authGuard]
+                component: UserExamsComponent
+            },
+            {
+                path: 'settings',
+                component: SettingsComponent
             }
         ]
     },
@@ -42,5 +47,13 @@ export const routes: Routes = [
     {
         path: 'sign-up',
         component: SignUpComponent
+    },
+    {
+        path: 'verify-email',
+        component: VerifyEmailComponent
+    },
+    {
+        path: 'register-patient',
+        component: RegisterPatientComponent
     }
 ];

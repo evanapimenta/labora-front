@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { IconUserComponent } from '../../../icons/icon-user';
 import { AuthController } from '../../../core/controllers/auth.controller';
 import { FormControl,ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
+import { NotificationService } from '../../../core/services/notification.service';
 
 @Component({
   selector: 'app-sign-up',
@@ -14,7 +15,11 @@ import { FormControl,ReactiveFormsModule, UntypedFormGroup, Validators } from '@
   styleUrl: './sign-up.component.css'
 })
 export class SignUpComponent {
-  constructor(private authController: AuthController, private router: Router){}
+  constructor(
+    private authController: AuthController, 
+    private router: Router,
+    private notificationService: NotificationService
+  ){}
   
     form!: UntypedFormGroup;
     ngOnInit(): void {
@@ -31,9 +36,21 @@ export class SignUpComponent {
    }
   
    register = () => {
-    debugger
+    if (this.form.invalid) {
+      this.notificationService.error('Por favor, preencha todos os campos do cadastro corretamente.');
+      return;
+    }
+    if (this.form.value.password !== this.form.value.confirmPassword) {
+      this.notificationService.error('As senhas digitadas não coincidem.');
+      return;
+    }
+    const email = this.form.value.email;
     this.authController.register(this.form.value).then((resp: any) => {
-      this.router.navigate(['/']);
-    })
+      this.notificationService.success('Cadastro inicial realizado com sucesso! Verifique seu e-mail para ativar a conta.');
+      this.router.navigate(['/verify-email'], { queryParams: { email } });
+    }).catch((err: any) => {
+      const errorMsg = this.notificationService.getErrorMsg(err);
+      this.notificationService.error(errorMsg);
+    });
    }
 }

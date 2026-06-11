@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormInputComponent } from '../../components/form-input/form-input.component';
 import { PatientController } from '../../core/controllers/patient.controller';
 import { UserController } from '../../core/controllers/user.controller';
+import { NgxCustomModalComponent } from 'ngx-custom-modal';
+import { NotificationService } from '../../core/services/notification.service';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [CommonModule, FormsModule, FormInputComponent],
+  imports: [CommonModule, FormsModule, FormInputComponent, NgxCustomModalComponent],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.css'
 })
@@ -27,10 +29,12 @@ export class UserProfileComponent implements OnInit {
 
   loading = false;
   errorMsg: string | null = null;
+  patient: any = null;
 
   constructor(
     private patientController: PatientController,
-    private userController: UserController
+    private userController: UserController,
+    private notificationService: NotificationService
   ) {}
 
   ngOnInit(): void {
@@ -55,6 +59,7 @@ export class UserProfileComponent implements OnInit {
 
     this.patientController.getById(userId).subscribe({
       next: (patient: any) => {
+        this.patient = patient;
         this.user.firstName = patient.userInfoDTO?.name || '';
         this.user.email = patient.userInfoDTO?.email || '';
         this.user.imagePathUrl = patient.userInfoDTO?.imagePathUrl || '';
@@ -64,6 +69,7 @@ export class UserProfileComponent implements OnInit {
       },
       error: (err: any) => {
         console.warn('Paciente não encontrado. Tentando usuário genérico:', err);
+        this.patient = null;
         this.userController.getById(userId).subscribe({
           next: (user: any) => {
             this.user.firstName = user.name || '';
@@ -81,6 +87,15 @@ export class UserProfileComponent implements OnInit {
         });
       }
     });
+  }
+
+  formatGender(gender: string): string {
+    if (!gender) return '—';
+    if (gender === 'FEMININO') return 'Feminino';
+    if (gender === 'MASCULINO') return 'Masculino';
+    if (gender === 'OUTRO') return 'Outro';
+    if (gender === 'PREFIRO_NAO_DIZER') return 'Prefiro não responder';
+    return gender;
   }
 
   getDecodedToken(): any {
@@ -143,7 +158,59 @@ export class UserProfileComponent implements OnInit {
     return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
   }
 
+  @ViewChild('passwordModal') passwordModal!: any;
+  newPassword = '';
+  confirmNewPassword = '';
+  passwordSaving = false;
+  passwordError: string | null = null;
+  passwordSuccess = false;
+
   onChangePassword() {
-    alert('Redirecionando para alteração de senha...');
+    this.newPassword = '';
+    this.confirmNewPassword = '';
+    this.passwordError = null;
+    this.passwordSuccess = false;
+    this.passwordModal.open();
+  }
+
+  submitPasswordChange() {
+    if (!this.newPassword || this.newPassword.length < 8) {
+      this.passwordError = 'A senha deve conter no mínimo 8 caracteres.';
+      this.notificationService.error(this.passwordError);
+      return;
+    }
+    const hasUpper = /[A-Z]/.test(this.newPassword);
+    const hasLower = /[a-z]/.test(this.newPassword);
+    const hasDigit = /\d/.test(this.newPassword);
+    if (!hasUpper || !hasLower || !hasDigit) {
+      this.passwordError = 'A senha deve conter letras maiúsculas, minúsculas e números.';
+      this.notificationService.error(this.passwordError);
+      return;
+    }
+    if (this.newPassword !== this.confirmNewPassword) {
+      this.passwordError = 'As senhas não coincidem.';
+      this.notificationService.error(this.passwordError);
+      return;
+    }
+
+    this.passwordSaving = true;
+    this.passwordError = null;
+
+    this.userController.changePassword(this.user.id, { password: this.newPassword }).subscribe({
+      next: () => {
+        this.passwordSaving = false;
+        this.passwordSuccess = true;
+        this.notificationService.success('Senha alterada com sucesso!');
+        setTimeout(() => {
+          this.passwordModal.close();
+        }, 1500);
+      },
+      error: (err: any) => {
+        this.passwordSaving = false;
+        this.passwordError = err?.message || 'Erro ao alterar a senha. Tente novamente.';
+        const toastMsg = this.notificationService.getErrorMsg(err);
+        this.notificationService.error(toastMsg);
+      }
+    });
   }
 }

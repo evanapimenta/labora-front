@@ -86,7 +86,8 @@ export function indexReducer(state = initialState, action: any) {
         localStorage.setItem('i18n_locale', payload);
         return { ...state, ...{ locale: payload } };
     } else if (type === 'toggleSidebar') {
-        return { ...state, ...{ sidebar: !state.sidebar } };
+        const sidebarValue = payload !== undefined ? payload : !state.sidebar;
+        return { ...state, ...{ sidebar: sidebarValue } };
     }
 
     return state;

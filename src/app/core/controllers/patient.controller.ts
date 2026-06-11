@@ -14,4 +14,8 @@ export class PatientController {
     update = (id: string, data: any) => {
         return this.apiService.put(`/patients/${id}`, data);
     }
+
+    create = (data: any) => {
+        return this.apiService.post('patients', data);
+    }
 }

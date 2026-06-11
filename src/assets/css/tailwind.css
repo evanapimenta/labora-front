@@ -268,7 +268,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 
     /* Buttons */
     .btn {
-        @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-sm font-semibold shadow-[0_10px_20px_-10px] outline-none transition duration-300 hover:shadow-none;
+        @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-sm font-semibold outline-none transition duration-300;
     }
     .btn-lg {
         @apply px-7 py-2.5 text-base;
@@ -281,49 +281,49 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     }
 
     .btn-primary {
-        @apply border-primary bg-primary text-white shadow-primary/60;
+        @apply border-primary bg-primary text-white;
     }
     .btn-outline-primary {
         @apply border-primary text-primary shadow-none hover:bg-primary hover:text-white;
     }
 
     .btn-secondary {
-        @apply border-secondary bg-secondary text-white shadow-secondary/60;
+        @apply border-secondary bg-secondary text-white;
     }
     .btn-outline-secondary {
         @apply border-secondary text-secondary shadow-none hover:bg-secondary hover:text-white;
     }
 
     .btn-success {
-        @apply border-success bg-success text-white shadow-success/60;
+        @apply border-success bg-success text-white;
     }
     .btn-outline-success {
         @apply border-success text-success shadow-none hover:bg-success hover:text-white;
     }
 
     .btn-danger {
-        @apply border-danger bg-danger text-white shadow-danger/60;
+        @apply border-danger bg-danger text-white;
     }
     .btn-outline-danger {
         @apply border-danger text-danger shadow-none hover:bg-danger hover:text-white;
     }
 
     .btn-warning {
-        @apply border-warning bg-warning text-white shadow-warning/60;
+        @apply border-warning bg-warning text-white;
     }
     .btn-outline-warning {
         @apply border-warning text-warning shadow-none hover:bg-warning hover:text-white;
     }
 
     .btn-info {
-        @apply border-info bg-info text-white shadow-info/60;
+        @apply border-info bg-info text-white;
     }
     .btn-outline-info {
         @apply border-info text-info shadow-none hover:bg-info hover:text-white;
     }
 
     .btn-dark {
-        @apply border-dark bg-dark text-white shadow-dark/60;
+        @apply border-dark bg-dark text-white;
     }
 
     .btn-outline-dark {
@@ -681,12 +681,13 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 }
 
 .swal2-container .swal2-popup.swal2-toast {
-    @apply bg-dark px-5 py-2.5;
+    @apply bg-dark !px-5 !py-2.5;
+    box-shadow: none !important;
 }
 
 .swal2-popup.swal2-toast .swal2-title,
 .swal2-container .swal2-popup.swal2-toast .swal2-html-container {
-    @apply text-white;
+    @apply text-white !text-sm !font-normal;
 }
 .swal2-container .swal2-popup.swal2-toast.color-primary {
     @apply bg-primary;
@@ -816,4 +817,22 @@ pre code.hljs {
 /* ngx-scrollbar */
 .ng-scroll-viewport {
     @apply w-full;
+}
+
+/* Autofill styling overrides */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+    -webkit-text-fill-color: #0e1726 !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover, 
+.dark input:-webkit-autofill:focus, 
+.dark input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px #121e32 inset !important;
+    -webkit-text-fill-color: #888ea8 !important;
 }

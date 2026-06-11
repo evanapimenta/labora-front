@@ -7,6 +7,7 @@ import { SearchInputComponent } from '../search-input/search-input.component';
 import { environment } from '../../../../environment';
 import { PatientController } from '../../core/controllers/patient.controller';
 import { UserController } from '../../core/controllers/user.controller';
+import { Store } from '@ngrx/store';
 
 interface UserProfile {
   name: string;
@@ -36,11 +37,24 @@ export class HeaderComponent implements OnInit {
     avatar: '/assets/images/profile.png'
   };
 
+  store: any;
+
   constructor(
     private router: Router,
     private patientController: PatientController,
-    private userController: UserController
-  ) {}
+    private userController: UserController,
+    public storeData: Store<any>
+  ) {
+    this.initStore();
+  }
+
+  async initStore() {
+    this.storeData
+      .select((d) => d.index)
+      .subscribe((d) => {
+        this.store = d;
+      });
+  }
 
   ngOnInit(): void {
     this.loadUserProfile();
@@ -63,6 +77,7 @@ export class HeaderComponent implements OnInit {
         this.userProfile.name = patient.userInfoDTO?.name || 'Sem nome';
         this.userProfile.email = patient.userInfoDTO?.email || '';
         this.userProfile.avatar = this.getAvatarUrl(patient.userInfoDTO?.imagePathUrl);
+        this.applySettings(patient.userInfoDTO?.settings);
       },
       error: (err: any) => {
         console.warn('Erro ao carregar paciente no header, tentando usuário genérico:', err);
@@ -72,6 +87,7 @@ export class HeaderComponent implements OnInit {
             this.userProfile.name = user.name || 'Sem nome';
             this.userProfile.email = user.email || '';
             this.userProfile.avatar = this.getAvatarUrl(user.imagePathUrl);
+            this.applySettings(user.settings);
           },
           error: (userErr: any) => {
             console.error('Erro ao carregar usuário no header:', userErr);
@@ -80,6 +96,18 @@ export class HeaderComponent implements OnInit {
         });
       }
     });
+  }
+
+  applySettings(settings: any) {
+    if (settings) {
+      if (settings.theme) {
+        this.storeData.dispatch({ type: 'toggleTheme', payload: settings.theme });
+      }
+      if (settings.sidebarCollapsed !== undefined) {
+        // sidebar = true significa sidebarCollapsed = false, logo passamos !sidebarCollapsed
+        this.storeData.dispatch({ type: 'toggleSidebar', payload: !settings.sidebarCollapsed });
+      }
+    }
   }
 
   getDecodedToken(): any {

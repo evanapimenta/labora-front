@@ -13,6 +13,10 @@ export const authGuard: CanActivateFn = (route, state) => {
   }
 
   if (accessService.access && accessService.access.accessToken) {
+    if (!accessService.role) {
+      router.navigate(['/register-patient']);
+      return false;
+    }
     return true;
   }
 

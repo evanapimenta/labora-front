@@ -1,0 +1,229 @@
+<div>
+    <div class="absolute inset-0 min-h-screen">
+        <img src="/assets/images/auth/bg-gradient.png" alt="image" class="h-full w-full object-cover fixed" />
+    </div>
+    
+    <div class="relative flex min-h-screen justify-center items-center bg-center bg-no-repeat px-4 py-12 dark:bg-[#060818] sm:px-16 z-10 animate__animated animate__fadeIn">
+        <div class="relative flex w-full max-w-[1400px] flex-col justify-between overflow-hidden rounded-2xl bg-white/70 backdrop-blur-xl dark:bg-[#191e3a]/75 border border-white/20 dark:border-white/10 shadow-2xl lg:min-h-[700px] lg:flex-row">
+            
+            <!-- Left Side Cover (Template Style) -->
+            <div class="relative hidden w-full items-center justify-center bg-primary p-5 lg:inline-flex lg:max-w-[500px] xl:max-w-[550px] xl:-ms-24 ltr:xl:skew-x-[12deg] rtl:xl:skew-x-[-12deg] shrink-0">
+                <div class="ltr:xl:-skew-x-[12deg] rtl:xl:skew-x-[12deg] text-center flex flex-col items-center">
+                    <div class="w-48 lg:w-72 mx-auto">
+                        <img src="/assets/images/logo.png" alt="Labify Logo" class="mx-auto w-24 mb-4 filter brightness-0 invert" />
+                    </div>
+                    <div class="hidden w-full max-w-[380px] lg:block mt-8">
+                        <img src="/assets/images/auth/login.png" alt="Cover Image" class="w-full object-contain" />
+                    </div>
+                    <h2 class="text-white text-2xl font-black mt-8 tracking-wide uppercase">Labify</h2>
+                    <p class="text-white/80 text-sm mt-2 max-w-sm">A plataforma completa para gestão e acompanhamento de exames laboratoriais.</p>
+                </div>
+            </div>
+            
+            <!-- Right Side Content -->
+            <div class="relative flex-1 flex flex-col justify-center px-4 pb-12 pt-10 sm:px-10 lg:px-16 overflow-y-auto">
+                
+                <!-- Estado 1: Verificando Link de Ativação -->
+                <div *ngIf="verifying" class="w-full text-center py-12">
+                    <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <h3 class="text-lg font-bold text-gray-800 dark:text-white">Validando credenciais...</h3>
+                    <p class="text-xs text-white-dark mt-2">Aguarde um momento enquanto autenticamos sua sessão.</p>
+                </div>
+
+                <!-- Estado 2: Erro de Verificação ou Cadastro -->
+                <div *ngIf="errorMsg && !verified" class="w-full text-center py-8">
+                    <div class="w-16 h-16 bg-danger/10 text-danger rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-danger">Falha na ativação da conta</h3>
+                    <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 max-w-md mx-auto">{{ errorMsg }}</p>
+                    <div class="mt-6 flex gap-4 justify-center">
+                        <a routerLink="/sign-up" class="btn btn-outline-primary text-xs uppercase py-2 px-5">Cadastrar Conta</a>
+                        <a routerLink="/sign-in" class="btn btn-primary text-xs uppercase py-2 px-5">Acessar Login</a>
+                    </div>
+                </div>
+
+                <!-- Estado 3: Conta Validada -> Formulário de Informações do Paciente -->
+                <div *ngIf="verified">
+                    <div class="mb-8 text-center lg:text-left border-b border-gray-200/50 dark:border-gray-800/50 pb-5">
+                        <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Completar Cadastro</h1>
+                        <p class="text-sm font-bold text-white-dark mt-1">Insira seus dados pessoais e de saúde para ativar seu perfil de paciente.</p>
+                    </div>
+
+                    <div *ngIf="errorMsg" class="alert alert-danger mb-6 py-3 px-4 text-xs font-bold text-danger bg-danger/10 border-l-4 border-danger rounded-r animate__animated animate__shakeX">
+                        {{ errorMsg }}
+                    </div>
+
+                    <form [formGroup]="form" (submit)="onSubmit()" class="space-y-8 text-gray-700 dark:text-white">
+                        
+                        <!-- Seção 1: Dados Pessoais e de Saúde -->
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-2">
+                                Informações Pessoais
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div>
+                                    <label for="cpf" class="text-xs font-semibold text-white-dark">CPF</label>
+                                    <input formControlName="cpf" id="cpf" type="text" placeholder="000.000.000-00" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('cpf')?.touched && form.get('cpf')?.invalid" class="text-[10px] text-danger mt-1">
+                                        <span *ngIf="form.get('cpf')?.errors?.['required']">O CPF é obrigatório.</span>
+                                        <span *ngIf="form.get('cpf')?.errors?.['invalidCpf']">CPF informado é inválido.</span>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <label for="birthDate" class="text-xs font-semibold text-white-dark">Data de Nascimento</label>
+                                    <input formControlName="birthDate" id="birthDate" type="date" class="form-input mt-1.5 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('birthDate')?.touched && form.get('birthDate')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Data de nascimento é obrigatória.
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="phoneNumber" class="text-xs font-semibold text-white-dark">Telefone Celular</label>
+                                    <input formControlName="phoneNumber" id="phoneNumber" type="text" placeholder="Ex: 11999999999" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('phoneNumber')?.touched && form.get('phoneNumber')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Celular inválido (somente DDD + número).
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+                                <div>
+                                    <label for="gender" class="text-xs font-semibold text-white-dark">Gênero Biológico</label>
+                                    <select formControlName="gender" id="gender" class="form-select mt-1.5 dark:bg-[#0e1726] dark:border-[#1b2e4b]">
+                                        <option value="FEMININO">Feminino</option>
+                                        <option value="MASCULINO">Masculino</option>
+                                        <option value="OUTRO">Outro</option>
+                                        <option value="PREFIRO_NAO_DIZER">Prefiro não declarar</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="weight" class="text-xs font-semibold text-white-dark">Peso (Kg)</label>
+                                    <input formControlName="weight" id="weight" type="number" step="0.1" placeholder="Ex: 75.0" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('weight')?.touched && form.get('weight')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Peso obrigatório (mínimo de 0.5 Kg).
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="height" class="text-xs font-semibold text-white-dark">Altura (m)</label>
+                                    <input formControlName="height" id="height" type="number" step="0.01" placeholder="Ex: 1.75" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('height')?.touched && form.get('height')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Altura obrigatória (ex: 1.75).
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seção 2: Contatos de Emergência e Convênio -->
+                        <div>
+                            <h4 class="text-sm font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-2">
+                                Acompanhamento e Convênio
+                            </h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                <div>
+                                    <label for="emergencyContactName" class="text-xs font-semibold text-white-dark">Contato de Emergência (Nome)</label>
+                                    <input formControlName="emergencyContactName" id="emergencyContactName" type="text" placeholder="Nome do responsável" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('emergencyContactName')?.touched && form.get('emergencyContactName')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Nome de contato é obrigatório.
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="emergencyContactNumber" class="text-xs font-semibold text-white-dark">Telefone de Emergência</label>
+                                    <input formControlName="emergencyContactNumber" id="emergencyContactNumber" type="text" placeholder="Telefone do responsável" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('emergencyContactNumber')?.touched && form.get('emergencyContactNumber')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Telefone de emergência é obrigatório.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="panel border border-dashed border-[#e0e6ed] dark:border-[#1b2e4b] rounded-xl p-4 mt-5 bg-white/30 dark:bg-[#101929]/50">
+                                <div class="flex items-center gap-3">
+                                    <input formControlName="insured" id="insured" type="checkbox" class="form-checkbox text-primary focus:ring-primary" />
+                                    <label for="insured" class="text-xs font-bold text-gray-700 dark:text-gray-300 cursor-pointer">Possui Convênio Médico?</label>
+                                </div>
+                                <div *ngIf="form.get('insured')?.value" class="mt-3 animate__animated animate__fadeIn">
+                                    <label for="insuranceName" class="text-xs font-semibold text-white-dark">Nome do Convênio</label>
+                                    <input formControlName="insuranceName" id="insuranceName" type="text" placeholder="Ex: Unimed, Bradesco, Amil..." class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('insuranceName')?.touched && form.get('insuranceName')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Nome do convênio médico é obrigatório se marcado.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Seção 3: Endereço -->
+                        <div formGroupName="addressDTO">
+                            <h4 class="text-sm font-bold text-gray-800 dark:text-white mb-4 flex items-center gap-2 border-b border-gray-100 dark:border-gray-800 pb-2">
+                                Endereço Residencial
+                            </h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                                <div>
+                                    <label for="zipCode" class="text-xs font-semibold text-white-dark">CEP</label>
+                                    <input formControlName="zipCode" id="zipCode" type="text" placeholder="00000-000" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('addressDTO.zipCode')?.touched && form.get('addressDTO.zipCode')?.invalid" class="text-[10px] text-danger mt-1">
+                                        CEP inválido (somente números).
+                                    </div>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="street" class="text-xs font-semibold text-white-dark">Logradouro (Rua/Avenida)</label>
+                                    <input formControlName="street" id="street" type="text" placeholder="Nome do logradouro" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('addressDTO.street')?.touched && form.get('addressDTO.street')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Nome da rua/avenida é obrigatório.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+                                <div>
+                                    <label for="number" class="text-xs font-semibold text-white-dark">Número</label>
+                                    <input formControlName="number" id="number" type="text" placeholder="Nº" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('addressDTO.number')?.touched && form.get('addressDTO.number')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Número é obrigatório.
+                                    </div>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label for="complement" class="text-xs font-semibold text-white-dark">Complemento (Opcional)</label>
+                                    <input formControlName="complement" id="complement" type="text" placeholder="Apto, Bloco, Casa..." class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mt-5">
+                                <div>
+                                    <label for="neighborhood" class="text-xs font-semibold text-white-dark">Bairro</label>
+                                    <input formControlName="neighborhood" id="neighborhood" type="text" placeholder="Nome do Bairro" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('addressDTO.neighborhood')?.touched && form.get('addressDTO.neighborhood')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Bairro é obrigatório.
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="city" class="text-xs font-semibold text-white-dark">Cidade</label>
+                                    <input formControlName="city" id="city" type="text" placeholder="Nome da Cidade" class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('addressDTO.city')?.touched && form.get('addressDTO.city')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Cidade é obrigatória.
+                                    </div>
+                                </div>
+                                <div>
+                                    <label for="state" class="text-xs font-semibold text-white-dark">Estado (UF)</label>
+                                    <input formControlName="state" id="state" type="text" placeholder="Ex: SP, RJ..." class="form-input mt-1.5 placeholder:text-gray-400 dark:bg-[#0e1726] dark:border-[#1b2e4b]" />
+                                    <div *ngIf="form.get('addressDTO.state')?.touched && form.get('addressDTO.state')?.invalid" class="text-[10px] text-danger mt-1">
+                                        Estado é obrigatório.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" [disabled]="submitting" class="btn bg-primary text-white w-full uppercase py-3 mt-8 text-xs font-bold tracking-wider rounded-lg border-0 shadow-lg hover:bg-primary-dark transition duration-200">
+                            <span *ngIf="submitting" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin inline-block me-2 align-middle"></span>
+                            Finalizar e Acessar Plataforma
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
