@@ -9,11 +9,11 @@ ENV API_URL=${API_URL}
 
 # Instala dependências primeiro (melhor cache)
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 # Copia o resto do código e builda
 COPY . .
-RUN npx ng build --configuration production
+RUN node set-env.js && npx ng build --configuration production
 
 # ---- Runtime stage ----
 FROM nginx:alpine
