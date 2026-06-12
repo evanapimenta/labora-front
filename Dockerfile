@@ -6,11 +6,11 @@ COPY . .
 
 RUN npm ci
 
-RUN npx ng build --configuration production
+RUN npx ng build --configuration production --output-path=dist
 
 FROM nginx:alpine
 
-COPY --from=build /app/dist/labify-frontend/browser /usr/share/nginx/html
+COPY --from=build /app/dist /usr/share/nginx/html
 
 EXPOSE 80
 
