@@ -1,34 +1,34 @@
-<header class="bg-white dark:bg-[#0e1726] shadow-sm border-b border-gray-200 dark:border-gray-700">
-    <div class="flex items-center justify-between px-6 py-4">
-        <div class="flex items-center">
+<header class="sticky top-0 z-30 bg-white/80 dark:bg-[#0e1726]/80 backdrop-blur-xl border-b border-gray-100/80 dark:border-white/[0.06]">
+    <div class="flex items-center justify-between px-6 py-3">
+        <div class="flex items-center gap-3">
             <button
                 *ngIf="sidebarCollapsed"
-                class="flex h-8 w-8 items-center justify-center rounded-full transition duration-300 hover:bg-gray-500/10 hover:text-primary dark:text-white-light dark:hover:bg-dark-light/10"
+                class="flex h-10 w-10 items-center justify-center rounded-xl text-gray-500 transition-all duration-200 hover:bg-primary/10 hover:text-primary dark:text-white-light dark:hover:bg-white/[0.06]"
                 (click)="onSidebarToggle()"
                 title="Abrir menu lateral">
                 <icon-menu></icon-menu>
             </button>
 
-            <div class="h-8 flex items-center ml-4">
-                <img *ngIf="sidebarCollapsed" [src]="logo" alt="Labify" class="h-8 w-auto" />
-            </div>
+            <a routerLink="/" class="h-9 flex items-center shrink-0">
+                <img [src]="logo" alt="Labify" class="h-8 w-auto" />
+            </a>
         </div>
 
         <div class="flex-1 max-w-md mx-8">
-            <app-search-input 
+            <app-search-input
                 placeholder="Pesquisar..."
                 (searchChange)="onSearchChange($event)"
                 (search)="onSearch($event)">
             </app-search-input>
         </div>
 
-        <div class="flex items-center">
+        <div class="flex items-center gap-2">
             <!-- Dark Mode Toggle Button -->
-            <div class="mr-4 flex items-center" *ngIf="store">
+            <div class="flex items-center" *ngIf="store">
                 <a
                     href="javascript:;"
                     *ngIf="store.theme === 'light'"
-                    class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition duration-300"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl text-gray-500 transition-all duration-200 hover:bg-primary/10 hover:text-primary dark:text-gray-300 dark:hover:bg-white/[0.06]"
                     (click)="storeData.dispatch({type: 'toggleTheme', payload:'dark'})"
                     title="Mudar para Modo Escuro">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
@@ -46,7 +46,7 @@
                 <a
                     href="javascript:;"
                     *ngIf="store.theme === 'dark'"
-                    class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition duration-300"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl text-gray-500 transition-all duration-200 hover:bg-primary/10 hover:text-primary dark:text-gray-300 dark:hover:bg-white/[0.06]"
                     (click)="storeData.dispatch({type: 'toggleTheme', payload:'system'})"
                     title="Mudar para Modo Automático (Sistema)">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
@@ -59,7 +59,7 @@
                 <a
                     href="javascript:;"
                     *ngIf="store.theme === 'system'"
-                    class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700 transition duration-300"
+                    class="flex h-10 w-10 items-center justify-center rounded-xl text-gray-500 transition-all duration-200 hover:bg-primary/10 hover:text-primary dark:text-gray-300 dark:hover:bg-white/[0.06]"
                     (click)="storeData.dispatch({type: 'toggleTheme', payload:'light'})"
                     title="Mudar para Modo Claro">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5">
@@ -74,12 +74,14 @@
                 </a>
             </div>
 
+            <div class="h-7 w-px bg-gray-200 dark:bg-white/[0.08] mx-1"></div>
+
             <div class="relative" #userDropdown data-user-dropdown>
-                <button 
-                    class="flex items-center p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                <button
+                    class="flex items-center gap-2.5 p-1 pr-2.5 rounded-full hover:bg-gray-100/70 dark:hover:bg-white/[0.06] transition-colors duration-200"
                     (click)="toggleUserDropdown()">
                     <div class="relative">
-                        <div class="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-primary to-[#c23b6a] flex items-center justify-center shadow-sm border-2 border-white dark:border-[#1b2e4b]">
+                        <div class="w-9 h-9 rounded-full overflow-hidden bg-gradient-to-br from-primary to-darkPurple flex items-center justify-center shadow-brand ring-2 ring-white dark:ring-[#1b2e4b]">
                             <img *ngIf="userProfile.avatar !== '/assets/images/profile.png'"
                                  [src]="userProfile.avatar"
                                  [alt]="userProfile.name"
@@ -87,47 +89,56 @@
                             <span *ngIf="userProfile.avatar === '/assets/images/profile.png'"
                                   class="text-sm font-black text-white select-none">{{ getUserInitials() }}</span>
                         </div>
-                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full border-2 border-white dark:border-[#0e1726]"></div>
+                        <div class="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-success rounded-full ring-2 ring-white dark:ring-[#0e1726]"></div>
                     </div>
+                    <div class="hidden md:flex flex-col items-start leading-tight">
+                        <span class="text-xs font-bold text-gray-800 dark:text-white-light truncate max-w-[120px]">{{ userProfile.name === 'Carregando...' ? '...' : userProfile.name.split(' ')[0] }}</span>
+                        <span class="text-[10px] text-gray-400 truncate max-w-[120px]">{{ userProfile.role }}</span>
+                    </div>
+                    <svg class="hidden md:block w-3.5 h-3.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
                 </button>
 
-                <div 
+                <div
                     *ngIf="isUserDropdownOpen"
-                    class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 py-1 z-50 dropdown-enter-active">
-                    <div class="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                        <p class="text-sm font-medium text-gray-900 dark:text-white">{{ userProfile.name }}</p>
-                        <p class="text-xs text-gray-500 dark:text-gray-400">{{ userProfile.email }}</p>
+                    class="absolute right-0 mt-2 w-60 bg-white dark:bg-[#1b2e4b] rounded-2xl shadow-xl shadow-gray-200/60 dark:shadow-black/40 border border-gray-100 dark:border-white/[0.06] py-1.5 z-50 animate-fade-in-up overflow-hidden">
+                    <div class="px-4 py-3 border-b border-gray-100 dark:border-white/[0.06] bg-softGradient dark:bg-transparent">
+                        <p class="text-sm font-bold text-gray-800 dark:text-white truncate">{{ userProfile.name }}</p>
+                        <p class="text-[11px] text-gray-500 dark:text-gray-400 truncate">{{ userProfile.email }}</p>
                     </div>
-                    
-                    <a 
-                        routerLink="/profile" 
-                        (click)="isUserDropdownOpen = false"
-                        class="menu-item flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <icon-user class="w-4 h-4 mr-3"></icon-user>
-                        Meu Perfil
-                    </a>
-                    
-                    <a 
-                        routerLink="/settings" 
-                        (click)="isUserDropdownOpen = false"
-                        class="menu-item flex items-center px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                        Configurações
-                    </a>
-                    
-                    <div class="border-t border-gray-200 dark:border-gray-700"></div>
-                    
-                    <button 
-                        (click)="logout()"
-                        class="menu-item flex items-center w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700">
-                        <svg class="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
-                        </svg>
-                        Sair
-                    </button>
+
+                    <div class="p-1.5">
+                        <a
+                            routerLink="/profile"
+                            (click)="isUserDropdownOpen = false"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-primary/5 hover:text-primary transition-colors duration-150">
+                            <icon-user class="w-4 h-4"></icon-user>
+                            Meu Perfil
+                        </a>
+
+                        <a
+                            routerLink="/settings"
+                            (click)="isUserDropdownOpen = false"
+                            class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-gray-700 dark:text-gray-300 hover:bg-primary/5 hover:text-primary transition-colors duration-150">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            Configurações
+                        </a>
+                    </div>
+
+                    <div class="border-t border-gray-100 dark:border-white/[0.06] p-1.5">
+                        <button
+                            (click)="logout()"
+                            class="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm text-danger hover:bg-danger/5 transition-colors duration-150">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                            </svg>
+                            Sair
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

@@ -6,11 +6,12 @@ import { IconUserComponent } from '../../../icons/icon-user';
 import { AuthController } from '../../../core/controllers/auth.controller';
 import { FormControl,ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import { NotificationService } from '../../../core/services/notification.service';
+import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-sign-up',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink ,IconMailComponent, IconLockDotsComponent, IconUserComponent],
+  imports: [ReactiveFormsModule, RouterLink ,IconMailComponent, IconLockDotsComponent, IconUserComponent, ThemeToggleComponent],
   templateUrl: './sign-up.component.html',
   styleUrl: './sign-up.component.css'
 })

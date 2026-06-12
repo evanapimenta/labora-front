@@ -5,12 +5,13 @@ import { Router, RouterLink } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthController } from '../../../core/controllers/auth.controller';
 import { NotificationService } from '../../../core/services/notification.service';
+import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
 
 
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [RouterLink ,IconMailComponent, IconLockDotsComponent, ReactiveFormsModule, FormsModule],
+  imports: [RouterLink ,IconMailComponent, IconLockDotsComponent, ReactiveFormsModule, FormsModule, ThemeToggleComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.css'
 })

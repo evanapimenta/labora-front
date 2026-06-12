@@ -5,24 +5,31 @@
     <div
         class="relative flex min-h-screen items-center justify-center bg-cover bg-center bg-no-repeat px-6 py-10 dark:bg-[#060818] sm:px-16"
     >
-        <img src="/assets/images/auth/coming-soon-object1.png" alt="image" class="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2" />
+        <!-- Theme Toggle (top-right) -->
+        <div class="absolute top-5 right-5 z-20">
+            <app-theme-toggle variant="glass"></app-theme-toggle>
+        </div>
+
+        <img src="/assets/images/auth/coming-soon-object1.png" alt="image" class="absolute left-0 top-1/2 h-full max-h-[893px] -translate-y-1/2 opacity-95" />
         <img src="/assets/images/auth/coming-soon-object2.png" alt="image" class="absolute left-24 top-0 h-40 md:left-[30%]" />
         <img src="/assets/images/auth/coming-soon-object2.png" alt="image" class="absolute right-24 bottom-0 h-40 md:right-[30%] rotate-180" />
         <img src="/assets/images/auth/coming-soon-object3.png" alt="image" class="absolute right-0 top-0 h-[300px]" />
         <div
-            class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 lg:min-h-[500px] lg:flex-row lg:gap-10 xl:gap-0"
+            class="relative flex w-full max-w-[1502px] flex-col justify-between overflow-hidden rounded-2xl bg-white/70 backdrop-blur-2xl dark:bg-black/50 shadow-2xl shadow-darkPurple/20 ring-1 ring-white/40 dark:ring-white/10 lg:min-h-[500px] lg:flex-row lg:gap-10 xl:gap-0"
         >
             <div
                 class="relative hidden w-full items-center justify-center bg-primary p-5 lg:inline-flex lg:max-w-[835px] xl:-ms-28 ltr:xl:skew-x-[14deg] rtl:xl:skew-x-[14deg]"
             >
+                <!-- Subtle gradient overlay on brand section -->
+                <div class="absolute inset-0 bg-gradient-to-br from-primary via-primary to-darkPurple opacity-95 ltr:xl:skew-x-0 rtl:xl:skew-x-0"></div>
                 <div
                     class="absolute inset-y-0 w-8 from-primary/10 via-transparent to-transparent ltr:-right-10 ltr:bg-gradient-to-r rtl:-left-10 rtl:bg-gradient-to-l xl:w-16 ltr:xl:-right-20 rtl:xl:-left-20"
                 ></div>
-                <div class="flex flex-col items-center justify-center ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
+                <div class="relative flex flex-col items-center justify-center ltr:xl:-skew-x-[14deg] rtl:xl:skew-x-[14deg]">
                     <a routerLink="/" class="block w-48 lg:w-72">
-                        <img src="/assets/images/logo.png" alt="Logo" class="w-full filter brightness-0 invert" />
+                        <img src="/assets/images/logo.png" alt="Logo" class="w-full filter brightness-0 invert drop-shadow-lg" />
                     </a>
-                    <div class="mt-10 hidden w-full max-w-[430px] lg:block">
+                    <div class="mt-10 hidden w-full max-w-[430px] lg:block drop-shadow-lg">
                         <img src="/assets/Adventure_Illustrations/Security_Animated/Security.svg" alt="Cover Image" class="w-full" />
                     </div>
                 </div>
@@ -30,15 +37,15 @@
             <div class="relative flex w-full flex-col items-center justify-center gap-6 px-4 pb-16 pt-6 sm:px-6 lg:max-w-[667px]">
                 <div class="w-full max-w-[440px] lg:mt-16">
                     <div class="my-10 lg:mt-0">
-                        <h1 class="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Login</h1>
-                        <p class="text-base font-bold leading-normal text-white-dark">Informe seu email e senha para entrar</p>
+                        <h1 class="text-3xl font-extrabold uppercase !leading-snug bg-mainGradient bg-clip-text text-transparent md:text-4xl">Login</h1>
+                        <p class="text-base font-bold leading-normal text-white-dark mt-1">Informe seu email e senha para entrar</p>
                     </div>
                     <form class="space-y-5 dark:text-white my-10" [formGroup]="form" (submit)="login()">
                         <div>
                             <label for="Email">Email</label>
                             <div class="relative text-white-dark">
-                                <input formControlName="email" id="Email" type="email" placeholder="Digite o Email" class="form-input ps-10 placeholder:text-white-dark" />
-                                <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                <input formControlName="email" id="Email" type="email" placeholder="Digite o Email" class="form-input ps-11 placeholder:text-white-dark h-12" />
+                                <span class="absolute start-4 top-1/2 -translate-y-1/2 text-gray-400">
                                     <icon-mail [fill]="false" />
                                 </span>
                             </div>
@@ -46,20 +53,20 @@
                         <div>
                             <label for="Password">Senha</label>
                             <div class="relative text-white-dark">
-                                <input formControlName="password" id="Password" type="password" placeholder="Digite a Senha" class="form-input ps-10 placeholder:text-white-dark" />
-                                <span class="absolute start-4 top-1/2 -translate-y-1/2">
+                                <input formControlName="password" id="Password" type="password" placeholder="Digite a Senha" class="form-input ps-11 placeholder:text-white-dark h-12" />
+                                <span class="absolute start-4 top-1/2 -translate-y-1/2 text-gray-400">
                                     <icon-lock-dots [fill]="false" />
                                 </span>
                             </div>
                         </div>
-                        <button type="submit" class="btn bg-primary text-white !mt-6 w-full border-0 uppercase">
+                        <button type="submit" class="btn bg-mainGradient text-white !mt-6 w-full border-0 uppercase shadow-brand hover:shadow-[0_14px_30px_-10px_rgba(206,81,108,0.55)] tracking-wider h-12">
                             Entrar
                         </button>
                     </form>
 
                     <div class="text-center dark:text-white mt-3">
                         Não tem uma conta?
-                        <a routerLink="/sign-up" class="cursor-pointer text-primary underline transition hover:text-black dark:hover:text-white">
+                        <a routerLink="/sign-up" class="cursor-pointer font-bold text-primary hover:text-darkPink transition-colors duration-200">
                             Cadastre-se
                         </a>
                     </div>

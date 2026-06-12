@@ -59,16 +59,52 @@
     }
 
     body {
-        @apply bg-[#fafafa] font-nunito;
+        @apply bg-[#f6f7fb] font-nunito text-[#0e1726] antialiased;
+        background-image:
+            radial-gradient(circle at 0% 0%, rgba(234, 93, 123, 0.04), transparent 50%),
+            radial-gradient(circle at 100% 100%, rgba(81, 50, 125, 0.04), transparent 50%);
     }
 
     body.dark {
         @apply bg-[#060818];
+        background-image: none;
+    }
+
+    /* Selection */
+    ::selection {
+        background-color: rgba(234, 93, 123, 0.20);
+        color: #51327d;
+    }
+
+    /* Custom scrollbar */
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    *::-webkit-scrollbar-thumb {
+        background-color: rgba(81, 50, 125, 0.18);
+        border-radius: 9999px;
+        border: 2px solid transparent;
+        background-clip: content-box;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(81, 50, 125, 0.32);
+        background-clip: content-box;
+    }
+    .dark *::-webkit-scrollbar-thumb {
+        background-color: rgba(255, 255, 255, 0.12);
+        background-clip: content-box;
     }
 
     /* Panel */
     .panel {
-        @apply relative rounded-md bg-white p-5 shadow dark:bg-[#0e1726];
+        @apply relative rounded-2xl bg-white p-5 shadow-card dark:bg-[#0e1726] dark:shadow-none transition-shadow duration-300;
+    }
+    .panel-elevated {
+        @apply shadow-elegant hover:shadow-card-hover;
     }
 
     /* Navbar */
@@ -96,16 +132,26 @@
 
     .sidebar .nav-item > button,
     .sidebar .nav-item > a {
-        @apply mb-1 flex w-full items-center justify-between overflow-hidden whitespace-nowrap rounded-md p-2.5 text-[#506690] hover:bg-[#000]/[0.08] hover:text-black dark:hover:bg-[#181f32] dark:hover:text-white-dark;
+        @apply relative mb-1 flex w-full items-center justify-between overflow-hidden whitespace-nowrap rounded-xl p-2.5 text-[#506690] transition-all duration-200 hover:bg-primary/5 hover:text-primary dark:hover:bg-white/[0.04] dark:hover:text-white-dark;
     }
     .sidebar .nav-item > button.active,
     .sidebar .nav-item > a.active {
-        @apply bg-[#000]/[0.08] text-black dark:bg-[#181f32] dark:text-white-dark;
+        @apply bg-primary/10 text-primary font-bold dark:bg-primary/15 dark:text-white;
+    }
+    .sidebar .nav-item > button.active::before,
+    .sidebar .nav-item > a.active::before {
+        content: '';
+        @apply absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 rounded-r-full bg-mainGradient;
     }
 
     .sidebar .nav-item > button.active > div > span,
     .sidebar .nav-item > a.active > div > span {
-        @apply dark:!text-white-dark;
+        @apply !text-primary dark:!text-white;
+    }
+
+    .sidebar .nav-item > button.active div:first-child svg,
+    .sidebar .nav-item > a.active div:first-child svg {
+        @apply !text-primary;
     }
 
     .sidebar ul.sub-menu li button,
@@ -268,7 +314,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
 
     /* Buttons */
     .btn {
-        @apply relative flex items-center justify-center rounded-md border px-5 py-2 text-sm font-semibold outline-none transition duration-300;
+        @apply relative inline-flex items-center justify-center gap-1.5 rounded-lg border px-5 py-2 text-sm font-semibold outline-none transition-all duration-300 hover:-translate-y-0.5 active:translate-y-0;
     }
     .btn-lg {
         @apply px-7 py-2.5 text-base;
@@ -277,11 +323,11 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply px-2.5 py-1.5 text-xs;
     }
     .btn[disabled] {
-        @apply cursor-not-allowed opacity-60;
+        @apply cursor-not-allowed opacity-60 hover:translate-y-0;
     }
 
     .btn-primary {
-        @apply border-primary bg-primary text-white;
+        @apply border-primary bg-primary text-white shadow-brand hover:bg-darkPink hover:border-darkPink hover:shadow-[0_10px_24px_-8px_rgba(206,81,108,0.55)];
     }
     .btn-outline-primary {
         @apply border-primary text-primary shadow-none hover:bg-primary hover:text-white;
@@ -331,7 +377,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     }
 
     .btn-gradient {
-        @apply bg-gradient-to-r from-[#51327d] to-[#db5673] text-white hover:from-[#4361EE] hover:to-[#EF1262];
+        @apply bg-gradient-to-r from-[#51327d] to-[#db5673] text-white border-transparent shadow-brand hover:from-[#4361EE] hover:to-[#EF1262];
     }
 
     /* Badge */
@@ -365,7 +411,7 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
     .form-textarea,
     .form-select,
     .form-multiselect {
-        @apply w-full rounded-md border border-[#e0e6ed] bg-white px-4 py-2 text-sm font-semibold text-black !outline-none focus:border-primary focus:ring-transparent dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary;
+        @apply w-full rounded-lg border border-[#e0e6ed] bg-white px-4 py-2 text-sm font-semibold text-black !outline-none transition-all duration-200 placeholder:font-normal placeholder:text-gray-400 focus:border-primary focus:ring-4 focus:ring-primary/10 hover:border-gray-300 dark:border-[#17263c] dark:bg-[#121e32] dark:text-white-dark dark:focus:border-primary;
     }
 
     .form-input-lg,
@@ -498,12 +544,11 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply flex;
     }
     .dropdown ul {
-        @apply absolute z-10 mt-1 min-w-[120px] rounded bg-white p-0 py-2 text-black shadow dark:bg-[#1b2e4b] dark:text-white-dark;
-        /* @apply my-1 min-w-[120px] rounded bg-white p-0 py-2 shadow dark:bg-[#1b2e4b]  text-black dark:text-white-dark; */
+        @apply absolute z-10 mt-2 min-w-[140px] rounded-xl border border-gray-100 bg-white p-1 text-sm text-black shadow-lg shadow-gray-200/50 dark:border-[#1b2e4b] dark:bg-[#1b2e4b] dark:text-white-dark dark:shadow-black/30;
     }
     .dropdown ul li > a,
     .dropdown ul li > button {
-        @apply flex items-center px-4 py-2 hover:bg-primary/10 hover:text-primary;
+        @apply flex items-center rounded-lg px-3 py-2 transition-colors duration-150 hover:bg-primary/10 hover:text-primary;
     }
 
     .dropdown ul li > button {
