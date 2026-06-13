@@ -5,11 +5,12 @@ import { FormControl, ReactiveFormsModule, UntypedFormGroup, Validators, Abstrac
 import { UserController } from '../../../core/controllers/user.controller';
 import { PatientController } from '../../../core/controllers/patient.controller';
 import { NotificationService } from '../../../core/services/notification.service';
+import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
 
 @Component({
   selector: 'app-register-patient',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, ThemeToggleComponent],
   templateUrl: './register-patient.component.html'
 })
 export class RegisterPatientComponent implements OnInit {
@@ -18,6 +19,7 @@ export class RegisterPatientComponent implements OnInit {
   verified: boolean = false;
   errorMsg: string | null = null;
   submitting: boolean = false;
+  currentStep: number = 1;
 
   form!: UntypedFormGroup;
 
@@ -93,13 +95,33 @@ export class RegisterPatientComponent implements OnInit {
     });
   }
 
+  weightValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const val = control.value;
+    if (!val) return null;
+    const num = parseFloat(val.toString().replace(',', '.'));
+    if (isNaN(num) || num < 0.5) {
+      return { invalidWeight: true };
+    }
+    return null;
+  }
+
+  heightValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const val = control.value;
+    if (!val) return null;
+    const num = parseFloat(val.toString().replace(',', '.'));
+    if (isNaN(num) || num < 0.3 || num > 3.0) {
+      return { invalidHeight: true };
+    }
+    return null;
+  }
+
   createForm(): void {
     this.form = new UntypedFormGroup({
       cpf: new FormControl('', [Validators.required, this.cpfValidator]),
       phoneNumber: new FormControl('', [Validators.required, Validators.pattern(/^\d{10,11}$/)]),
       gender: new FormControl('FEMININO', [Validators.required]),
-      weight: new FormControl('', [Validators.required, Validators.min(0.5)]),
-      height: new FormControl('', [Validators.required, Validators.min(0.3), Validators.max(3.0)]),
+      weight: new FormControl('', [Validators.required, this.weightValidator.bind(this)]),
+      height: new FormControl('', [Validators.required, this.heightValidator.bind(this)]),
       birthDate: new FormControl('', [Validators.required]),
       emergencyContactName: new FormControl('', [Validators.required]),
       emergencyContactNumber: new FormControl('', [Validators.required]),
@@ -197,17 +219,27 @@ export class RegisterPatientComponent implements OnInit {
     }
 
     this.submitting = true;
-    const formValue = this.form.value;
+    const formValue = {
+      ...this.form.value,
+      addressDTO: { ...this.form.value.addressDTO }
+    };
     // Garante CPF sem formatação
     formValue.cpf = formValue.cpf.replace(/\D/g, '');
     // Garante CEP sem formatação
     formValue.addressDTO.zipCode = formValue.addressDTO.zipCode.replace(/\D/g, '');
 
+    // Parse weight and height strings to numbers for API payload
+    if (formValue.weight) {
+      formValue.weight = parseFloat(formValue.weight.toString().replace(',', '.'));
+    }
+    if (formValue.height) {
+      formValue.height = parseFloat(formValue.height.toString().replace(',', '.'));
+    }
+
     this.patientController.create(formValue).subscribe({
       next: (resp: any) => {
         this.submitting = false;
         this.notificationService.success('Cadastro de paciente concluído com sucesso!');
-        // Redireciona para a home da plataforma onde o usuário já entra autenticado
         this.router.navigate(['/']);
       },
       error: (err: any) => {
@@ -218,6 +250,106 @@ export class RegisterPatientComponent implements OnInit {
         this.notificationService.error(toastMsg);
       }
     });
+  }
+
+  nextStep(): void {
+    if (this.currentStep === 1) {
+      const step1Fields = ['cpf', 'birthDate', 'phoneNumber', 'gender', 'weight', 'height'];
+      let step1Valid = true;
+      step1Fields.forEach(field => {
+        const control = this.form.get(field);
+        control?.markAsTouched();
+        control?.updateValueAndValidity();
+        if (control?.invalid) {
+          step1Valid = false;
+        }
+      });
+      if (!step1Valid) {
+        this.notificationService.error('Por favor, preencha os dados pessoais corretamente.');
+        return;
+      }
+    } else if (this.currentStep === 2) {
+      const step2Fields = ['emergencyContactName', 'emergencyContactNumber'];
+      let step2Valid = true;
+      step2Fields.forEach(field => {
+        const control = this.form.get(field);
+        control?.markAsTouched();
+        control?.updateValueAndValidity();
+        if (control?.invalid) {
+          step2Valid = false;
+        }
+      });
+      if (!step2Valid) {
+        this.notificationService.error('Por favor, preencha os contatos de emergência corretamente.');
+        return;
+      }
+    }
+
+    if (this.currentStep < 3) {
+      this.currentStep++;
+    }
+  }
+
+  prevStep(): void {
+    if (this.currentStep > 1) {
+      this.currentStep--;
+    }
+  }
+
+  onWeightInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let digits = input.value.replace(/\D/g, ''); // get only digits
+    
+    if (!digits) {
+      this.form.get('weight')?.setValue('');
+      input.value = '';
+      return;
+    }
+
+    if (digits.length > 4) {
+      digits = digits.substring(0, 4);
+    }
+
+    let formatted = '';
+    if (digits.length === 1) {
+      formatted = digits;
+    } else if (digits.length === 2) {
+      formatted = digits;
+    } else if (digits.length === 3) {
+      formatted = digits.slice(0, 2) + ',' + digits.slice(2);
+    } else {
+      formatted = digits.slice(0, 3) + ',' + digits.slice(3);
+    }
+
+    this.form.get('weight')?.setValue(formatted, { emitEvent: false });
+    input.value = formatted;
+  }
+
+  onHeightInput(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    let digits = input.value.replace(/\D/g, ''); // get only digits
+    
+    if (!digits) {
+      this.form.get('height')?.setValue('');
+      input.value = '';
+      return;
+    }
+
+    if (digits.length > 3) {
+      digits = digits.substring(0, 3);
+    }
+
+    let formatted = '';
+    if (digits.length === 1) {
+      formatted = digits;
+    } else if (digits.length === 2) {
+      formatted = digits.slice(0, 1) + ',' + digits.slice(1);
+    } else {
+      formatted = digits.slice(0, 1) + ',' + digits.slice(1);
+    }
+
+    this.form.get('height')?.setValue(formatted, { emitEvent: false });
+    input.value = formatted;
   }
 
   private markAllAsTouched(formGroup: UntypedFormGroup) {
@@ -231,3 +363,4 @@ export class RegisterPatientComponent implements OnInit {
     });
   }
 }
+

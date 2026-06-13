@@ -10,6 +10,7 @@ import { ExamCardComponent } from '../../components/exam-card/exam-card.componen
 import { BranchCardComponent } from '../../components/branch-card/branch-card.component';
 import { NgxCustomModalComponent } from 'ngx-custom-modal';
 import { NotificationService } from '../../core/services/notification.service';
+import { AccessService } from '../../core/services/access.service';
 
 @Component({
   selector: 'app-schedule',
@@ -74,6 +75,7 @@ export class ScheduleComponent implements OnInit {
     private testController: TestController,
     private laboratoryController: LaboratoryController,
     private scheduleController: ScheduleController,
+    private accessService: AccessService,
     @Inject(PLATFORM_ID) private platformId: Object,
     private notificationService: NotificationService
   ) {
@@ -462,9 +464,10 @@ export class ScheduleComponent implements OnInit {
     this.bookingError = null;
 
     const formattedDate = this.formatDatePayload(this.selectedDate, this.selectedTime);
+    const patientId = this.accessService.userId || 'dummy';
     const payload = [{
       testId: this.selectedExamObject.id,
-      patientId: 'dummy',
+      patientId: patientId,
       scheduledFor: formattedDate,
       branchId: this.selectedBranchObject.id
     }];

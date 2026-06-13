@@ -26,6 +26,29 @@ export class AccessService {
     }
   }
 
+  get userId(): string | null {
+    const accessData = this.access;
+    if (!accessData || !accessData.accessToken) {
+      return null;
+    }
+    try {
+      const parts = accessData.accessToken.split('.');
+      if (parts.length !== 3) return null;
+      let payload = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const pad = payload.length % 4;
+      if (pad) {
+        payload += '='.repeat(4 - pad);
+      }
+      const decodedStr = typeof atob !== 'undefined'
+        ? atob(payload)
+        : Buffer.from(payload, 'base64').toString('binary');
+      const decoded = JSON.parse(decodedStr);
+      return decoded.id || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   get role(): string | null {
     const accessData = this.access;
     if (!accessData || !accessData.accessToken) {

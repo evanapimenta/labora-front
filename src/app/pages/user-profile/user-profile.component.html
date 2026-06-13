@@ -295,26 +295,59 @@
 
 </div>
 
-<ngx-custom-modal #passwordModal customClass="modal-top small-modal">
+<ngx-custom-modal #passwordModal customClass="small-modal animate animate-slide-in-down">
   <ng-template #modalHeader>
-    <div class="font-bold text-sm">Alterar Senha</div>
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center">
+        <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+      <div>
+        <span class="text-xs font-bold text-primary uppercase tracking-wider">Segurança</span>
+        <h3 class="text-base font-extrabold text-gray-800 dark:text-white-light leading-none mt-1">Alterar Senha</h3>
+      </div>
+    </div>
   </ng-template>
   <ng-template #modalBody>
     <form (submit)="submitPasswordChange(); $event.preventDefault();" class="space-y-4 text-left">
-      <div>
-        <label for="newPassword" class="text-xs font-semibold text-gray-700 dark:text-gray-300">Nova Senha</label>
-        <input type="password" id="newPassword" [(ngModel)]="newPassword" name="newPassword" required class="form-input mt-1.5 dark:bg-[#0e1726] dark:border-[#1b2e4b]" placeholder="Digite a nova senha" />
+      <div class="group">
+        <label for="newPassword" class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 block">Nova Senha</label>
+        <div class="relative">
+          <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-primary transition-colors pointer-events-none">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <input type="password" id="newPassword" [(ngModel)]="newPassword" name="newPassword" required 
+                 class="form-input h-11 ps-10 pr-4 bg-gray-50 dark:bg-[#0e1726] border border-[#e0e6ed] dark:border-[#1b2e4b] focus:border-primary/60 dark:focus:border-primary/60 group-hover:border-primary/40 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors placeholder:text-gray-400/80" 
+                 placeholder="Digite a nova senha" />
+        </div>
       </div>
-      <div>
-        <label for="confirmPassword" class="text-xs font-semibold text-gray-700 dark:text-gray-300">Confirmar Nova Senha</label>
-        <input type="password" id="confirmPassword" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" required class="form-input mt-1.5 dark:bg-[#0e1726] dark:border-[#1b2e4b]" placeholder="Confirme a nova senha" />
+      
+      <div class="group">
+        <label for="confirmPassword" class="text-[10px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500 mb-1.5 block">Confirmar Nova Senha</label>
+        <div class="relative">
+          <div class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-hover:text-primary transition-colors pointer-events-none">
+            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+          </div>
+          <input type="password" id="confirmPassword" [(ngModel)]="confirmNewPassword" name="confirmNewPassword" required 
+                 class="form-input h-11 ps-10 pr-4 bg-gray-50 dark:bg-[#0e1726] border border-[#e0e6ed] dark:border-[#1b2e4b] focus:border-primary/60 dark:focus:border-primary/60 group-hover:border-primary/40 rounded-lg text-sm font-semibold text-gray-700 dark:text-gray-200 transition-colors placeholder:text-gray-400/80" 
+                 placeholder="Confirme a nova senha" />
+        </div>
       </div>
+      
       <div *ngIf="passwordError" class="text-[10px] text-danger mt-1 font-semibold">{{ passwordError }}</div>
       <div *ngIf="passwordSuccess" class="text-[10px] text-success mt-1 font-semibold">Senha alterada com sucesso!</div>
       
       <div class="flex justify-end gap-3 pt-4 border-t border-gray-100 dark:border-gray-800">
-        <button type="button" class="btn btn-outline-dark text-xs" (click)="passwordModal.close()">Cancelar</button>
-        <button type="submit" class="btn btn-primary text-xs" [disabled]="passwordSaving">
+        <button type="button" class="btn btn-outline-dark text-xs hover:-translate-y-0.5 transition-transform" (click)="passwordModal.close()">Cancelar</button>
+        <button type="submit" class="btn btn-primary text-xs hover:-translate-y-0.5 transition-transform" [disabled]="passwordSaving">
           <span *ngIf="passwordSaving" class="w-3 h-3 border-2 border-white border-t-transparent rounded-full animate-spin inline-block me-1 align-middle"></span>
           Salvar
         </button>
