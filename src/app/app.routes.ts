@@ -45,6 +45,10 @@ export const routes: Routes = [
         component: SignInComponent
     },
     {
+        path: 'login/callback',
+        loadComponent: () => import('./pages/auth/login-callback/login-callback.component').then(m => m.LoginCallbackComponent)
+    },
+    {
         path: 'sign-up',
         component: SignUpComponent
     },

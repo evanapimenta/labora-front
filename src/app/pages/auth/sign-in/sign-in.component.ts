@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { IconMailComponent } from '../../../icons/icon-mail';
 import { IconLockDotsComponent } from '../../../icons/icon-lock-dots';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { FormControl, FormsModule, ReactiveFormsModule, UntypedFormGroup, Validators } from '@angular/forms';
 import { AuthController } from '../../../core/controllers/auth.controller';
 import { NotificationService } from '../../../core/services/notification.service';
 import { ThemeToggleComponent } from '../../../components/theme-toggle/theme-toggle.component';
-
+import { environment } from '../../../../../environment';
 
 @Component({
   selector: 'app-sign-in',
@@ -19,12 +19,18 @@ export class SignInComponent {
   constructor(
     private authController: AuthController, 
     private router: Router,
+    private route: ActivatedRoute,
     private notificationService: NotificationService
   ){}
 
   form!: UntypedFormGroup;
   ngOnInit(): void {
     this.createForm();
+    this.route.queryParams.subscribe(params => {
+      if (params['error']) {
+        this.notificationService.error(params['error']);
+      }
+    });
   }
 
   createForm = () => {
@@ -47,4 +53,8 @@ export class SignInComponent {
     this.notificationService.error(errorMsg);
   });
  }
+
+  loginWithGoogle = () => {
+    window.location.href = environment.api + '/login/google';
+  }
 }

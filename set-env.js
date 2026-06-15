@@ -19,7 +19,10 @@ if (fs.existsSync(envPath)) {
             if ((value.startsWith('"') && value.endsWith('"')) || (value.startsWith("'") && value.endsWith("'"))) {
                 value = value.slice(1, -1);
             }
-            if (!process.env[key]) {
+            if (process.env[key] !== undefined) {
+                // Sobrescreve para garantir que o .env tem precedência
+                process.env[key] = value;
+            } else {
                 process.env[key] = value;
             }
         }
