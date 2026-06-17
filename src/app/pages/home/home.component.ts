@@ -83,6 +83,10 @@ export class HomeComponent implements OnInit {
   localSelecionado: any = null;
   exameSelecionado: any = null;
 
+  isPreparoModalOpen = false;
+  selectedPreparo: string | null = null;
+  selectedTestName: string = '';
+
   constructor(
     private scheduleController: ScheduleController,
     private accessService: AccessService
@@ -146,15 +150,83 @@ export class HomeComponent implements OnInit {
     return `${address.street || ''}, ${address.number || ''} - ${address.neighborhood || ''}, ${address.city || ''} - ${address.state || ''}`;
   }
 
-  printResult(url: string) {
-    if (typeof window !== 'undefined') {
-      const printWindow = window.open(url, '_blank');
+  async printResult(url: string) {
+    if (typeof window === 'undefined') return;
+
+    try {
+      // Usamos um proxy de CORS apenas para testes, pois o PDF da w3.org bloqueia requisições de localhost
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
+      const response = await fetch(proxyUrl);
+      const blob = await response.blob();
+      
+      const pdfBlob = new Blob([blob], { type: 'application/pdf' });
+      const blobUrl = window.URL.createObjectURL(pdfBlob);
+
+      // Abre uma nova aba vazia
+      const printWindow = window.open('', '_blank');
+      
       if (printWindow) {
-        printWindow.focus();
-        setTimeout(() => {
-          printWindow.print();
-        }, 500);
+        // Escreve o HTML na nova aba contendo o PDF em tela cheia e o script de auto-impressão
+        printWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <title>Imprimir Resultado</title>
+              <style>
+                body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #f3f4f6; }
+                iframe { width: 100%; height: 100%; border: none; }
+              </style>
+            </head>
+            <body>
+              <iframe id="pdfIframe" src="${blobUrl}"></iframe>
+              <script>
+                const iframe = document.getElementById('pdfIframe');
+                iframe.onload = function() {
+                  setTimeout(function() {
+                    iframe.contentWindow.focus();
+                    iframe.contentWindow.print();
+                  }, 500);
+                };
+              </script>
+            </body>
+          </html>
+        `);
+        printWindow.document.close();
+      } else {
+        // Se o popup for bloqueado pelo navegador
+        window.open(url, '_blank');
       }
+    } catch (e) {
+      console.error('Erro ao abrir nova aba de impressão:', e);
+      window.open(url, '_blank');
+    }
+  }
+
+  downloadResult(url: string, fileName: string) {
+    if (typeof window !== 'undefined') {
+      fetch(url)
+        .then(response => response.blob())
+        .then(blob => {
+          const blobUrl = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = blobUrl;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          window.URL.revokeObjectURL(blobUrl);
+          document.body.removeChild(a);
+        })
+        .catch(err => {
+          console.error('Erro ao fazer download do arquivo', err);
+          // Fallback if fetch fails (e.g. CORS)
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          a.target = '_blank';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        });
     }
   }
 
@@ -163,5 +235,19 @@ export class HomeComponent implements OnInit {
       local: this.localSelecionado,
       exame: this.exameSelecionado,
     });
+  }
+
+  openPreparoModal(agendamento: any) {
+    this.selectedTestName = agendamento.testName;
+    this.selectedPreparo = agendamento.preparationInstructions || 'Nenhum preparo específico necessário para este exame.';
+    this.isPreparoModalOpen = true;
+  }
+
+  closePreparoModal() {
+    this.isPreparoModalOpen = false;
+    setTimeout(() => {
+      this.selectedPreparo = null;
+      this.selectedTestName = '';
+    }, 300);
   }
 }

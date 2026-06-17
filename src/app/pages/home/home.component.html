@@ -76,7 +76,7 @@
                             </div>
                         </div>
                         <div class="mt-2.5 flex gap-2">
-                            <button class="btn-aux py-1 px-2.5 text-[10px]">Preparo</button>
+                            <button (click)="openPreparoModal(a)" class="btn-aux py-1 px-2.5 text-[10px]">Preparo</button>
                             <button class="btn-main py-1 px-2.5 text-[10px]">Reagendar</button>
                         </div>
                     </div>
@@ -124,9 +124,9 @@
                             <button (click)="printResult(r.resultUrl)" class="hover:text-primary p-2 rounded-lg hover:bg-primary/5 transition-colors" title="Imprimir" aria-label="Imprimir" *ngIf="r.resultUrl">
                                 <icon-printer class="w-4.5 h-4.5"></icon-printer>
                             </button>
-                            <a [href]="r.resultUrl" target="_blank" class="hover:text-primary p-2 rounded-lg hover:bg-primary/5 transition-colors flex items-center justify-center" title="Download" aria-label="Download" *ngIf="r.resultUrl">
+                            <button (click)="downloadResult(r.resultUrl, r.testName + '.pdf')" class="hover:text-primary p-2 rounded-lg hover:bg-primary/5 transition-colors flex items-center justify-center" title="Download" aria-label="Download" *ngIf="r.resultUrl">
                                 <icon-download class="w-4.5 h-4.5"></icon-download>
-                            </a>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -192,6 +192,56 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Preparo -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300"
+    [class.opacity-0]="!isPreparoModalOpen"
+    [class.pointer-events-none]="!isPreparoModalOpen"
+    [class.opacity-100]="isPreparoModalOpen"
+>
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="closePreparoModal()"></div>
+
+    <!-- Modal Panel -->
+    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 scale-95"
+         [class.scale-100]="isPreparoModalOpen"
+         [class.translate-y-0]="isPreparoModalOpen"
+         [class.translate-y-4]="!isPreparoModalOpen"
+    >
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#1b2e4b]">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <span class="w-1 h-5 bg-mainGradient rounded-full"></span>
+                Preparo para {{ selectedTestName }}
+            </h3>
+            <button (click)="closePreparoModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-5 max-h-[60vh] overflow-y-auto">
+            <div class="bg-primary/5 rounded-xl p-4 border border-primary/10">
+                <div class="flex gap-3">
+                    <icon-laboratory class="w-5 h-5 text-primary flex-shrink-0 mt-0.5"></icon-laboratory>
+                    <div class="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-wrap leading-relaxed font-medium">
+                        {{ selectedPreparo }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 dark:border-[#1b2e4b] flex justify-end">
+            <button (click)="closePreparoModal()" class="btn-main px-6 py-2 shadow-sm hover:shadow-md transition-shadow">
+                Entendi
+            </button>
         </div>
     </div>
 </div>
