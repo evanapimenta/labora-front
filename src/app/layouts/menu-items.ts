@@ -64,6 +64,12 @@ export const MENU_ITEMS: MenuItem[] = [
         icon: 'icon-file',
         label: 'Exames',
       },
+      {
+        link: '/appointments',
+        keys: [ENUM_PAGES.appointments],
+        icon: 'icon-laboratory',
+        label: 'Meus Agendamentos',
+      },
     ],
   },
 ];

@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { FormInputComponent } from '../../components/form-input/form-input.component';
 import { PatientController } from '../../core/controllers/patient.controller';
@@ -16,6 +16,7 @@ import { NotificationService } from '../../core/services/notification.service';
 })
 export class UserProfileComponent implements OnInit {
 
+  isBrowser = false;
 
   user = {
     id: '',
@@ -34,8 +35,11 @@ export class UserProfileComponent implements OnInit {
   constructor(
     private patientController: PatientController,
     private userController: UserController,
-    private notificationService: NotificationService
-  ) {}
+    private notificationService: NotificationService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   ngOnInit(): void {
     this.loadProfile();

@@ -9,7 +9,7 @@
                 <icon-menu></icon-menu>
             </button>
 
-            <a routerLink="/" class="h-9 flex items-center shrink-0">
+            <a *ngIf="sidebarCollapsed" routerLink="/" class="h-9 flex items-center shrink-0">
                 <img [src]="logo" alt="Labify" class="h-8 w-auto" />
             </a>
         </div>

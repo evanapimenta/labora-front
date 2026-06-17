@@ -9,6 +9,7 @@ import { UserExamsComponent } from './pages/user-exams/user-exams.component';
 import { UserProfileComponent } from './pages/user-profile/user-profile.component';
 import { ScheduleComponent } from './pages/schedule/schedule.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { UserAppointmentsComponent } from './pages/user-appointments/user-appointments.component';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -33,6 +34,10 @@ export const routes: Routes = [
             {
                 path: 'exams',
                 component: UserExamsComponent
+            },
+            {
+                path: 'appointments',
+                component: UserAppointmentsComponent
             },
             {
                 path: 'settings',

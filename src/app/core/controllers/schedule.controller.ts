@@ -18,4 +18,16 @@ export class ScheduleController {
     getCompleted = () => {
         return this.apiService.get('/schedule/me/completed');
     }
+
+    getAll = () => {
+        return this.apiService.get('/schedule/me/all');
+    }
+
+    reschedule = (id: string, scheduledFor: string) => {
+        return this.apiService.put(`/schedule/${id}`, { scheduledFor });
+    }
+
+    cancel = (id: string) => {
+        return this.apiService.delete(`/schedule/${id}`);
+    }
 }

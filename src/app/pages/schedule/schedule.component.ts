@@ -1,6 +1,7 @@
 import { Component, OnInit, Inject, PLATFORM_ID, ViewChild } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { TestController } from '../../core/controllers/test.controller';
 import { LaboratoryController } from '../../core/controllers/laboratory.controller';
@@ -15,7 +16,7 @@ import { AccessService } from '../../core/services/access.service';
 @Component({
   selector: 'app-schedule',
   standalone: true,
-  imports: [CommonModule, FormsModule, SearchInputComponent, ExamCardComponent, BranchCardComponent, NgxCustomModalComponent],
+  imports: [CommonModule, FormsModule, RouterLink, SearchInputComponent, ExamCardComponent, BranchCardComponent, NgxCustomModalComponent],
   templateUrl: './schedule.component.html'
 })
 export class ScheduleComponent implements OnInit {
@@ -31,6 +32,15 @@ export class ScheduleComponent implements OnInit {
 
   examsData: any[] = [];
   private _examSearchQuery = '';
+  suggestions: any[] = [];
+  showSuggestions = false;
+  activeSuggestionIndex = -1;
+  private debounceTimeout: any;
+
+  // Region Autocomplete properties
+  regionSuggestions: any[] = [];
+  showRegionSuggestions = false;
+  activeRegionSuggestionIndex = -1;
   get examSearchQuery(): string {
     return this._examSearchQuery;
   }
@@ -71,11 +81,16 @@ export class ScheduleComponent implements OnInit {
 
   isBrowser = false;
 
+  // city pre-filter coming from query param
+  private prefilledCity = '';
+  private autoSelectDone = false;
+
   constructor(
     private testController: TestController,
     private laboratoryController: LaboratoryController,
     private scheduleController: ScheduleController,
     private accessService: AccessService,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object,
     private notificationService: NotificationService
   ) {
@@ -84,7 +99,22 @@ export class ScheduleComponent implements OnInit {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.platformId)) {
-      this.loadExams();
+      this.route.queryParams.subscribe(params => {
+        this.autoSelectDone = false;
+        if (params['exam']) {
+          this._examSearchQuery = params['exam'];
+        } else {
+          this._examSearchQuery = '';
+        }
+        if (params['city']) {
+          this.prefilledCity = params['city'];
+          this.regionSearchQuery = params['city'];
+        } else {
+          this.prefilledCity = '';
+          this.regionSearchQuery = '';
+        }
+        this.loadExams();
+      });
     }
   }
 
@@ -125,6 +155,153 @@ export class ScheduleComponent implements OnInit {
     }
   }
 
+  // ─── Autocomplete Handlers ──────────────────────────────────────────────────
+
+  onSearchInputChange() {
+    if (this.debounceTimeout) {
+      clearTimeout(this.debounceTimeout);
+    }
+
+    const query = this.examSearchQuery;
+    if (!query.trim()) {
+      this.suggestions = [];
+      this.showSuggestions = false;
+      this.loadExams(); // Reload list
+      return;
+    }
+
+    this.debounceTimeout = setTimeout(() => {
+      this.testController.getAll(0, 10, query).subscribe({
+        next: (res: any) => {
+          this.suggestions = res.content || [];
+          this.showSuggestions = true;
+          this.activeSuggestionIndex = -1;
+        },
+        error: (err) => {
+          console.error('Erro ao buscar sugestões:', err);
+        }
+      });
+    }, 250);
+  }
+
+  onInputFocus() {
+    if (this.examSearchQuery.trim()) {
+      this.showSuggestions = true;
+    }
+  }
+
+  onInputBlur() {
+    // delay to let mousedown on suggestion buttons trigger
+    setTimeout(() => {
+      this.showSuggestions = false;
+    }, 180);
+  }
+
+  onKeyDown(event: KeyboardEvent) {
+    if (!this.showSuggestions || this.suggestions.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.activeSuggestionIndex = (this.activeSuggestionIndex + 1) % this.suggestions.length;
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.activeSuggestionIndex = (this.activeSuggestionIndex - 1 + this.suggestions.length) % this.suggestions.length;
+    } else if (event.key === 'Enter') {
+      if (this.activeSuggestionIndex >= 0 && this.activeSuggestionIndex < this.suggestions.length) {
+        event.preventDefault();
+        this.selectSuggestion(this.suggestions[this.activeSuggestionIndex]);
+      }
+    } else if (event.key === 'Escape') {
+      this.showSuggestions = false;
+    }
+  }
+
+  selectSuggestion(suggestion: any) {
+    this.examSearchQuery = suggestion.name;
+    this.showSuggestions = false;
+    this.suggestions = [];
+    this.selectExam(suggestion);
+  }
+
+  // ─── Region Autocomplete Handlers ──────────────────────────────────────────
+
+  onRegionInputChange() {
+    const q = this.regionSearchQuery.trim().toLowerCase();
+    if (!q) {
+      this.regionSuggestions = [];
+      this.showRegionSuggestions = false;
+      this.filterBranches();
+      return;
+    }
+
+    const citySet = new Set<string>();
+    const neighborhoodSet = new Set<string>();
+    const nameSet = new Set<string>();
+
+    const matches: any[] = [];
+
+    this.branchesData.forEach(b => {
+      const city = b.city || '';
+      const neighborhood = b.neighborhood || '';
+      const name = b.name || '';
+
+      if (city.toLowerCase().includes(q) && !citySet.has(city)) {
+        citySet.add(city);
+        matches.push({ label: `${city} (Cidade)`, value: city, type: 'city' });
+      }
+      if (neighborhood.toLowerCase().includes(q) && !neighborhoodSet.has(neighborhood)) {
+        neighborhoodSet.add(neighborhood);
+        matches.push({ label: `${neighborhood} (Bairro)`, value: neighborhood, type: 'neighborhood' });
+      }
+      if (name.toLowerCase().includes(q) && !nameSet.has(name)) {
+        nameSet.add(name);
+        matches.push({ label: `${name} (Unidade)`, value: name, type: 'name' });
+      }
+    });
+
+    this.regionSuggestions = matches.slice(0, 10);
+    this.showRegionSuggestions = true;
+    this.activeRegionSuggestionIndex = -1;
+  }
+
+  onRegionInputFocus() {
+    if (this.regionSearchQuery.trim()) {
+      this.showRegionSuggestions = true;
+    }
+  }
+
+  onRegionInputBlur() {
+    setTimeout(() => {
+      this.showRegionSuggestions = false;
+    }, 180);
+  }
+
+  onRegionKeyDown(event: KeyboardEvent) {
+    if (!this.showRegionSuggestions || this.regionSuggestions.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.activeRegionSuggestionIndex = (this.activeRegionSuggestionIndex + 1) % this.regionSuggestions.length;
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.activeRegionSuggestionIndex = (this.activeRegionSuggestionIndex - 1 + this.regionSuggestions.length) % this.regionSuggestions.length;
+    } else if (event.key === 'Enter') {
+      if (this.activeRegionSuggestionIndex >= 0 && this.activeRegionSuggestionIndex < this.regionSuggestions.length) {
+        event.preventDefault();
+        this.selectRegionSuggestion(this.regionSuggestions[this.activeRegionSuggestionIndex]);
+      }
+    } else if (event.key === 'Escape') {
+      this.showRegionSuggestions = false;
+    }
+  }
+
+  selectRegionSuggestion(suggestion: any) {
+    this.regionSearchQuery = suggestion.value;
+    this.showRegionSuggestions = false;
+    this.regionSuggestions = [];
+    this.onRegionSearchClick();
+  }
+
   loadExams(): void {
     const pageIndex = this.currentPage - 1;
     this.testController.getAll(pageIndex, this.pageSize, this.examSearchQuery).subscribe({
@@ -132,6 +309,16 @@ export class ScheduleComponent implements OnInit {
         this.examsData = res.content || [];
         this.totalPages = res.totalPages || 0;
         this.totalElements = res.totalElements || 0;
+
+        if (!this.autoSelectDone && this._examSearchQuery) {
+          const matchedExam = this.examsData.find(
+            (e: any) => e.name.toLowerCase() === this._examSearchQuery.toLowerCase()
+          );
+          if (matchedExam) {
+            this.autoSelectDone = true;
+            this.selectExam(matchedExam);
+          }
+        }
       },
       error: (err: any) => {
         console.error('Erro ao carregar exames do backend:', err);

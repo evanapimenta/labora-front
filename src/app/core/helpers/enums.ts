@@ -4,6 +4,7 @@ export enum ENUM_PAGES {
   profile = 'profile',
   exams = 'exams',
   schedule = 'schedule',
+  appointments = 'appointments',
 }
 
 export enum ENUM_STATUS {}

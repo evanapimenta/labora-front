@@ -26,12 +26,16 @@ export class LoginCallbackComponent implements OnInit {
           refreshToken: refreshToken
         };
 
-        localStorage.setItem('access', JSON.stringify(tokenData));
-        this.notificationService.success('Conectado com o Google com sucesso!');
-        this.router.navigate(['/']);
+        if (typeof window !== 'undefined' && window.localStorage) {
+          localStorage.setItem('access', JSON.stringify(tokenData));
+          this.notificationService.success('Conectado com o Google com sucesso!');
+          this.router.navigate(['/']);
+        }
       } else {
-        this.notificationService.error('Falha ao autenticar com o Google. Tokens não encontrados.');
-        this.router.navigate(['/sign-in']);
+        if (typeof window !== 'undefined') {
+          this.notificationService.error('Falha ao autenticar com o Google. Tokens não encontrados.');
+          this.router.navigate(['/sign-in']);
+        }
       }
     });
   }

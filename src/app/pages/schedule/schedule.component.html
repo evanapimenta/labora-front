@@ -70,11 +70,42 @@
     </div>
 
     <div class="flex flex-col sm:flex-row items-end gap-4 mb-6">
-      <div class="flex-1 w-full">
+      <div class="flex-1 w-full relative">
         <label class="text-xs text-gray-500 mb-1.5 block font-semibold">Exame</label>
-        <app-search-input placeholder="Qual exame procura?" [value]="examSearchQuery"
-          (searchChange)="examSearchQuery = $event" (search)="onSearchClick()">
-        </app-search-input>
+        <div class="relative group w-full">
+          <input
+            type="text"
+            class="w-full peer form-input pl-11 pr-4 h-11 rounded-xl bg-gray-50 border-transparent hover:bg-white hover:border-gray-200 focus:bg-white focus:border-primary placeholder:text-gray-400 placeholder:font-medium dark:bg-[#121e32] dark:hover:bg-[#0e1726] dark:focus:bg-[#0e1726]"
+            placeholder="Qual exame procura?"
+            [(ngModel)]="examSearchQuery"
+            (input)="onSearchInputChange()"
+            (focus)="onInputFocus()"
+            (blur)="onInputBlur()"
+            (keydown)="onKeyDown($event)"
+          />
+          <div class="absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-400 peer-focus:text-primary transition-colors duration-200 pointer-events-none">
+            <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          
+          <!-- Autocomplete Dropdown -->
+          <div *ngIf="showSuggestions && suggestions.length > 0"
+               class="absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-[#1b2e4b] border border-gray-100 dark:border-gray-800 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+            <button *ngFor="let suggestion of suggestions; let i = index"
+                    type="button"
+                    (mousedown)="selectSuggestion(suggestion)"
+                    [ngClass]="{'bg-primary/10 text-primary': i === activeSuggestionIndex}"
+                    class="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-[#121e32] transition-colors border-b border-gray-50 dark:border-gray-800/40 last:border-b-0 flex items-center gap-2">
+              <svg class="w-4 h-4 opacity-60 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span class="truncate font-semibold text-gray-700 dark:text-white-light">{{ suggestion.name }}</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       <button type="button"
@@ -140,18 +171,59 @@
     <h5 class="font-bold text-lg dark:text-white-light text-gray-800">Agendamento</h5>
   </div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-end animate__animated animate__fadeIn">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 items-end animate__animated animate__fadeIn relative z-50">
     <app-exam-card [exam]="selectedExamObject" [isSummaryMode]="true" (change)="resetStep(1)"
       (viewDetails)="openDetails(selectedExamObject)">
     </app-exam-card>
 
     <div>
       <label class="text-xs text-gray-500 mb-1.5 block font-semibold">Qual sua região?</label>
-      <div class="flex gap-4">
-        <div class="flex-1">
-          <app-search-input placeholder="Região ou cidade" [value]="regionSearchQuery"
-            (searchChange)="regionSearchQuery = $event" (search)="onRegionSearchClick()">
-          </app-search-input>
+      <div class="flex gap-4 relative">
+        <div class="flex-1 relative">
+          <div class="relative group w-full">
+            <input
+              type="text"
+              class="w-full peer form-input pl-11 pr-4 h-11 rounded-xl bg-gray-50 border-transparent hover:bg-white hover:border-gray-200 focus:bg-white focus:border-primary placeholder:text-gray-400 placeholder:font-medium dark:bg-[#121e32] dark:hover:bg-[#0e1726] dark:focus:bg-[#0e1726]"
+              placeholder="Região, cidade ou unidade"
+              [(ngModel)]="regionSearchQuery"
+              (input)="onRegionInputChange()"
+              (focus)="onRegionInputFocus()"
+              (blur)="onRegionInputBlur()"
+              (keydown)="onRegionKeyDown($event)"
+            />
+            <div class="absolute top-1/2 left-3.5 -translate-y-1/2 text-gray-400 peer-focus:text-primary transition-colors duration-200 pointer-events-none">
+              <svg class="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            
+            <!-- Autocomplete Region Dropdown -->
+            <div *ngIf="showRegionSuggestions && regionSuggestions.length > 0"
+                 class="absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-[#1b2e4b] border border-gray-100 dark:border-gray-800 rounded-xl shadow-lg max-h-60 overflow-y-auto">
+              <button *ngFor="let suggestion of regionSuggestions; let i = index"
+                      type="button"
+                      (mousedown)="selectRegionSuggestion(suggestion)"
+                      [ngClass]="{'bg-primary/10 text-primary': i === activeRegionSuggestionIndex}"
+                      class="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-[#121e32] transition-colors border-b border-gray-50 dark:border-gray-800/40 last:border-b-0 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 truncate">
+                  <svg class="w-4 h-4 opacity-60 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  <span class="truncate font-semibold text-gray-700 dark:text-white-light">{{ suggestion.value }}</span>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-full shrink-0"
+                      [ngClass]="{
+                        'bg-info/10 text-info': suggestion.type === 'city',
+                        'bg-success/10 text-success': suggestion.type === 'neighborhood',
+                        'bg-warning/10 text-warning': suggestion.type === 'name'
+                      }">
+                  {{ suggestion.type === 'city' ? 'Cidade' : (suggestion.type === 'neighborhood' ? 'Bairro' : 'Unidade') }}
+                </span>
+              </button>
+            </div>
+          </div>
         </div>
         <button type="button" class="btn btn-primary h-11 px-6 font-bold flex items-center gap-2"
           (click)="onRegionSearchClick()">
@@ -164,6 +236,16 @@
   <div *ngIf="loading" class="flex justify-center py-20">
     <div class="w-10 h-10 border-4 border-t-transparent rounded-full animate-spin border-primary"></div>
   </div>
+  <div *ngIf="!loading && pagedBranches.length > 0" class="mb-4">
+    <span class="text-xs font-bold uppercase tracking-wider text-primary bg-primary/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 animate__animated animate__fadeIn">
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z" />
+        <circle cx="12" cy="10" r="3" />
+      </svg>
+      Unidades mais próximas
+    </span>
+  </div>
+
   <div *ngIf="!loading"
     class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate__animated animate__fadeIn">
     <app-branch-card *ngFor="let branch of pagedBranches" [branch]="branch" [selectedExam]="selectedExamObject"
@@ -371,9 +453,9 @@
       (click)="startNewScheduling()">
       Novo Agendamento
     </button>
-    <a href="/exams"
+    <a routerLink="/appointments"
       class="btn btn-primary font-bold h-11 px-6 flex items-center justify-center hover:-translate-y-0.5 transition-transform shadow-md shadow-primary/20">
-      Ver Meus Exames
+      Ver Meus Agendamentos
     </a>
   </div>
 </div>
