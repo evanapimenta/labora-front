@@ -217,4 +217,127 @@ export class UserProfileComponent implements OnInit {
       }
     });
   }
+
+  isEditing = false;
+  saving = false;
+
+  editData = {
+    name: '',
+    phoneNumber: '',
+    gender: '',
+    weight: null as number | null,
+    height: null as number | null,
+    insured: false,
+    insuranceName: '',
+    emergencyContactName: '',
+    emergencyContactNumber: '',
+    address: {
+      zipCode: '',
+      street: '',
+      number: '',
+      complement: '',
+      neighborhood: '',
+      city: '',
+      state: '',
+      country: 'Brasil'
+    }
+  };
+
+  startEdit() {
+    this.editData = {
+      name: this.patient?.userInfoDTO?.name || this.user.firstName || '',
+      phoneNumber: this.patient?.phoneNumber || '',
+      gender: this.patient?.gender || 'PREFIRO_NAO_DIZER',
+      weight: this.patient?.weight || null,
+      height: this.patient?.height || null,
+      insured: this.patient?.insured || false,
+      insuranceName: this.patient?.insuranceName || '',
+      emergencyContactName: this.patient?.emergencyContactName || '',
+      emergencyContactNumber: this.patient?.emergencyContactNumber || '',
+      address: {
+        zipCode: this.patient?.address?.zipCode || '',
+        street: this.patient?.address?.street || '',
+        number: this.patient?.address?.number || '',
+        complement: this.patient?.address?.complement || '',
+        neighborhood: this.patient?.address?.neighborhood || '',
+        city: this.patient?.address?.city || '',
+        state: this.patient?.address?.state || '',
+        country: this.patient?.address?.country || 'Brasil'
+      }
+    };
+    this.isEditing = true;
+  }
+
+  cancelEdit() {
+    this.isEditing = false;
+  }
+
+  saveProfile() {
+    if (!this.editData.name.trim()) {
+      this.notificationService.error('O nome completo não pode estar vazio.');
+      return;
+    }
+
+    this.saving = true;
+    this.errorMsg = null;
+
+    // 1. Update user name
+    const userUpdate = this.userController.update(this.user.id, { name: this.editData.name });
+
+    // 2. Update patient details
+    const patientPayload = {
+      phoneNumber: this.editData.phoneNumber,
+      gender: this.editData.gender,
+      weight: this.editData.weight,
+      height: this.editData.height,
+      insured: this.editData.insured,
+      insuranceName: this.editData.insured ? this.editData.insuranceName : '',
+      emergencyContactName: this.editData.emergencyContactName,
+      emergencyContactNumber: this.editData.emergencyContactNumber,
+      addressDTO: {
+        zipCode: this.editData.address.zipCode,
+        street: this.editData.address.street,
+        number: this.editData.address.number,
+        complement: this.editData.address.complement,
+        neighborhood: this.editData.address.neighborhood,
+        city: this.editData.address.city,
+        state: this.editData.address.state,
+        country: this.editData.address.country
+      }
+    };
+
+    const patientUpdate = this.patientController.update(this.user.id, patientPayload);
+
+    userUpdate.subscribe({
+      next: () => {
+        if (this.patient) {
+          patientUpdate.subscribe({
+            next: () => {
+              this.notificationService.success('Perfil atualizado com sucesso!');
+              this.isEditing = false;
+              this.saving = false;
+              this.loadProfile();
+            },
+            error: (err: any) => {
+              console.error('Erro ao atualizar dados do paciente:', err);
+              this.errorMsg = 'Erro ao atualizar dados adicionais.';
+              this.notificationService.error(this.notificationService.getErrorMsg(err));
+              this.saving = false;
+            }
+          });
+        } else {
+          this.notificationService.success('Nome do perfil atualizado com sucesso!');
+          this.isEditing = false;
+          this.saving = false;
+          this.loadProfile();
+        }
+      },
+      error: (err: any) => {
+        console.error('Erro ao atualizar nome do usuário:', err);
+        this.errorMsg = 'Erro ao atualizar nome do usuário.';
+        this.notificationService.error(this.notificationService.getErrorMsg(err));
+        this.saving = false;
+      }
+    });
+  }
 }

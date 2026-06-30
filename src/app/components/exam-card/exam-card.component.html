@@ -51,7 +51,7 @@
 </div>
 
 <ng-template #summaryTmpl>
-  <div class="panel border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#0e1726] p-4.5 rounded-2xl flex justify-between items-center min-h-[5.5rem] py-3 w-full animate__animated animate__fadeIn shadow-soft">
+  <div class="panel border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#0e1726] p-4.5 rounded-2xl flex justify-between items-center h-24 w-full animate__animated animate__fadeIn shadow-soft">
     <div class="flex items-center gap-3 min-w-0">
       <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -70,11 +70,11 @@
         </div>
       </div>
     </div>
-    <div class="flex flex-col gap-1.5 shrink-0">
-      <button type="button" (click)="onViewDetails($event)" class="text-[11px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] px-3 py-1 rounded-lg hover:bg-gray-50 hover:border-gray-300 dark:hover:bg-[#121e32] text-gray-600 dark:text-gray-400 transition-all duration-200">
+    <div class="flex flex-col gap-1 shrink-0">
+      <button type="button" (click)="onViewDetails($event)" class="h-8 w-20 text-[11px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] rounded-lg flex items-center justify-center hover:bg-gray-50 hover:border-gray-300 dark:hover:bg-[#121e32] text-gray-600 dark:text-gray-400 transition-all duration-200">
         Detalhes
       </button>
-      <button type="button" (click)="onChange()" class="text-[10px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] px-2 py-0.5 rounded-lg hover:bg-primary/5 hover:border-primary/30 hover:text-primary text-gray-500 dark:text-gray-400 transition-all duration-200">
+      <button type="button" (click)="onChange()" class="h-8 w-20 text-[11px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] rounded-lg flex items-center justify-center hover:bg-primary/5 hover:border-primary/30 hover:text-primary text-gray-500 dark:text-gray-400 transition-all duration-200">
         Alterar
       </button>
     </div>

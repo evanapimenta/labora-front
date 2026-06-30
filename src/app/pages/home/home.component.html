@@ -24,13 +24,24 @@
                                 {{ s.description }}
                             </p>
                             <div>
-                                <a [routerLink]="s.buttonLink" [class]="'inline-flex items-center gap-2 px-6 py-2.5 border rounded-xl text-xs sm:text-sm lg:text-base font-bold transition-all duration-300 hover:-translate-y-0.5 ' + s.btnClass">
-                                    {{ s.buttonText }}
-                                    <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                                        <polyline points="12 5 19 12 12 19"></polyline>
-                                    </svg>
-                                </a>
+                                <ng-container *ngIf="!s.isModal; else modalBtn">
+                                    <a [routerLink]="s.buttonLink" [class]="'inline-flex items-center gap-2 px-6 py-2.5 border rounded-xl text-xs sm:text-sm lg:text-base font-bold transition-all duration-300 hover:-translate-y-0.5 ' + s.btnClass">
+                                        {{ s.buttonText }}
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg>
+                                    </a>
+                                </ng-container>
+                                <ng-template #modalBtn>
+                                    <button type="button" (click)="openSupportModal()" [class]="'inline-flex items-center gap-2 px-6 py-2.5 border rounded-xl text-xs sm:text-sm lg:text-base font-bold transition-all duration-300 hover:-translate-y-0.5 ' + s.btnClass">
+                                        {{ s.buttonText }}
+                                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                                            <polyline points="12 5 19 12 12 19"></polyline>
+                                        </svg>
+                                    </button>
+                                </ng-template>
                             </div>
                         </div>
 
@@ -382,6 +393,90 @@
                     <path d="M21 12a9 9 0 11-6.219-8.56"/>
                 </svg>
                 {{ isRescheduling ? 'Salvando...' : 'Confirmar' }}
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Suporte -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300"
+    [class.opacity-0]="!isSupportModalOpen"
+    [class.pointer-events-none]="!isSupportModalOpen"
+    [class.opacity-100]="isSupportModalOpen"
+>
+    <!-- Overlay -->
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="closeSupportModal()"></div>
+
+    <!-- Modal Panel -->
+    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 scale-95"
+         [class.scale-100]="isSupportModalOpen"
+         [class.translate-y-0]="isSupportModalOpen"
+         [class.translate-y-4]="!isSupportModalOpen"
+    >
+        <!-- Modal Header -->
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#1b2e4b]">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <span class="w-1 h-5 bg-mainGradient rounded-full"></span>
+                Suporte e Atendimento
+            </h3>
+            <button (click)="closeSupportModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors">
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-6 py-5 space-y-4">
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+                Precisa de ajuda? Entre em contato conosco através de um dos nossos canais de atendimento:
+            </p>
+            <div class="space-y-3">
+                <!-- WhatsApp -->
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-green-500/10 border border-green-500/20 text-green-700 dark:text-green-400">
+                    <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                    </svg>
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider">WhatsApp</div>
+                        <div class="text-sm font-semibold">(11) 99999-9999</div>
+                    </div>
+                </div>
+
+                <!-- Telefone -->
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-primary/10 border border-primary/20 text-primary">
+                    <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                    </svg>
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider">Central de Suporte</div>
+                        <div class="text-sm font-semibold">0800 123 4567</div>
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="flex items-center gap-3 p-3 rounded-xl bg-[#EFBD22]/10 border border-[#EFBD22]/20 text-[#D29E15] dark:text-[#EFBD22]">
+                    <svg class="w-5 h-5 flex-shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <div>
+                        <div class="text-xs font-bold uppercase tracking-wider">E-mail</div>
+                        <div class="text-sm font-semibold">suporte&#64;labify.com.br</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Horário -->
+            <div class="text-center text-xs text-gray-400 mt-2">
+                Horário de atendimento: Segunda a Sexta, das 08:00 às 18:00
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-6 py-4 border-t border-gray-100 dark:border-[#1b2e4b] flex justify-end">
+            <button (click)="closeSupportModal()" class="btn-main px-6 py-2 shadow-sm hover:shadow-md transition-shadow">
+                Fechar
             </button>
         </div>
     </div>

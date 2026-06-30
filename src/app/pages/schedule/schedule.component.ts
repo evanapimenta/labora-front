@@ -161,67 +161,19 @@ export class ScheduleComponent implements OnInit {
     if (this.debounceTimeout) {
       clearTimeout(this.debounceTimeout);
     }
-
-    const query = this.examSearchQuery;
-    if (!query.trim()) {
-      this.suggestions = [];
-      this.showSuggestions = false;
-      this.loadExams(); // Reload list
-      return;
-    }
-
+    this.currentPage = 1;
     this.debounceTimeout = setTimeout(() => {
-      this.testController.getAll(0, 10, query).subscribe({
-        next: (res: any) => {
-          this.suggestions = res.content || [];
-          this.showSuggestions = true;
-          this.activeSuggestionIndex = -1;
-        },
-        error: (err) => {
-          console.error('Erro ao buscar sugestões:', err);
-        }
-      });
-    }, 250);
+      this.loadExams();
+    }, 300);
   }
 
-  onInputFocus() {
-    if (this.examSearchQuery.trim()) {
-      this.showSuggestions = true;
-    }
-  }
+  onInputFocus() {}
 
-  onInputBlur() {
-    // delay to let mousedown on suggestion buttons trigger
-    setTimeout(() => {
-      this.showSuggestions = false;
-    }, 180);
-  }
+  onInputBlur() {}
 
-  onKeyDown(event: KeyboardEvent) {
-    if (!this.showSuggestions || this.suggestions.length === 0) return;
+  onKeyDown(event: KeyboardEvent) {}
 
-    if (event.key === 'ArrowDown') {
-      event.preventDefault();
-      this.activeSuggestionIndex = (this.activeSuggestionIndex + 1) % this.suggestions.length;
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault();
-      this.activeSuggestionIndex = (this.activeSuggestionIndex - 1 + this.suggestions.length) % this.suggestions.length;
-    } else if (event.key === 'Enter') {
-      if (this.activeSuggestionIndex >= 0 && this.activeSuggestionIndex < this.suggestions.length) {
-        event.preventDefault();
-        this.selectSuggestion(this.suggestions[this.activeSuggestionIndex]);
-      }
-    } else if (event.key === 'Escape') {
-      this.showSuggestions = false;
-    }
-  }
-
-  selectSuggestion(suggestion: any) {
-    this.examSearchQuery = suggestion.name;
-    this.showSuggestions = false;
-    this.suggestions = [];
-    this.selectExam(suggestion);
-  }
+  selectSuggestion(suggestion: any) {}
 
   // ─── Region Autocomplete Handlers ──────────────────────────────────────────
 
@@ -622,6 +574,11 @@ export class ScheduleComponent implements OnInit {
     }
     if (step <= 1) {
       this.selectedBranchObject = null;
+      this.selectedExam = null;
+      this.selectedExamObject = null;
+      this._examSearchQuery = '';
+      this.currentPage = 1;
+      this.loadExams();
     }
   }
 

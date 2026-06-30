@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
       title: 'Seus resultados, na palma da mão',
       description: 'Seus exames reunidos, de forma simples e prática.',
       buttonText: 'Ver meus exames',
-      buttonLink: '/schedule',
+      buttonLink: '/appointments',
       image: '/assets/Adventure_Illustrations/Medical Research/Medical Research.png',
       bgColor: 'bg-[#EFBD22]',
       btnClass: 'border-white text-white hover:bg-white hover:text-[#EFBD22]'
@@ -59,12 +59,23 @@ export class HomeComponent implements OnInit {
       title: 'Suporte fácil ao seu alcance',
       description: 'Tire suas dúvidas de forma rápida e descomplicada',
       buttonText: 'Atendimento online',
-      buttonLink: '/',
+      buttonLink: '',
+      isModal: true,
       image: '/assets/Adventure_Illustrations/Medical Care/Medical Care.png',
       bgColor: 'bg-[#E75169]',
       btnClass: 'border-white text-white hover:bg-white hover:text-[#E75169]'
     }
   ];
+
+  isSupportModalOpen = false;
+
+  openSupportModal() {
+    this.isSupportModalOpen = true;
+  }
+
+  closeSupportModal() {
+    this.isSupportModalOpen = false;
+  }
 
   agendamentos: any[] = [];
   resultados: any[] = [];

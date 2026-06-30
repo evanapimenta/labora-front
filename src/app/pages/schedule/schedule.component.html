@@ -90,21 +90,7 @@
             </svg>
           </div>
           
-          <!-- Autocomplete Dropdown -->
-          <div *ngIf="showSuggestions && suggestions.length > 0"
-               class="absolute z-50 left-0 right-0 mt-2 bg-white dark:bg-[#1b2e4b] border border-gray-100 dark:border-gray-800 rounded-xl shadow-lg max-h-60 overflow-y-auto">
-            <button *ngFor="let suggestion of suggestions; let i = index"
-                    type="button"
-                    (mousedown)="selectSuggestion(suggestion)"
-                    [ngClass]="{'bg-primary/10 text-primary': i === activeSuggestionIndex}"
-                    class="w-full text-left px-4 py-2.5 text-sm hover:bg-gray-50 dark:hover:bg-[#121e32] transition-colors border-b border-gray-50 dark:border-gray-800/40 last:border-b-0 flex items-center gap-2">
-              <svg class="w-4 h-4 opacity-60 text-primary shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              <span class="truncate font-semibold text-gray-700 dark:text-white-light">{{ suggestion.name }}</span>
-            </button>
-          </div>
+          <!-- Autocomplete Dropdown Removed -->
         </div>
       </div>
 
@@ -395,18 +381,28 @@
     </app-branch-card>
 
     <div
-      class="panel border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#0e1726] p-4.5 rounded-lg flex justify-between items-center h-24">
-      <div>
-        <h6 class="font-extrabold text-gray-800 dark:text-white-light text-[15px] tracking-wide">
-          {{ getFormattedDate(selectedDate) }}
-        </h6>
-        <div class="font-extrabold text-gray-600 dark:text-gray-300 text-[15px] mt-0.5">
-          {{ selectedTime }}
+      class="panel border border-[#e0e6ed] dark:border-[#1b2e4b] bg-white dark:bg-[#0e1726] p-4.5 rounded-2xl flex justify-between items-center h-24 shadow-soft w-full animate__animated animate__fadeIn">
+      <div class="flex items-center gap-3 min-w-0">
+        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <div class="min-w-0">
+          <h6 class="font-extrabold text-gray-800 dark:text-white-light text-[15px] uppercase tracking-wide truncate">
+            {{ getFormattedDate(selectedDate) }}
+          </h6>
+          <div class="text-[12px] text-gray-500 font-semibold mt-0.5">
+            {{ selectedTime }}
+          </div>
         </div>
       </div>
-      <div>
+      <div class="shrink-0">
         <button type="button" (click)="resetStep(3)"
-          class="text-[10px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] px-2 py-0.5 rounded hover:bg-gray-50 dark:hover:bg-[#121e32] text-gray-500 dark:text-gray-400 transition-colors">
+          class="h-8 w-20 text-[11px] font-bold border border-[#e0e6ed] dark:border-[#253b5c] rounded-lg flex items-center justify-center hover:bg-primary/5 hover:border-primary/30 hover:text-primary text-gray-500 dark:text-gray-400 transition-all duration-200">
           Alterar
         </button>
       </div>
@@ -433,7 +429,7 @@
 <div *ngIf="bookingSuccess"
   class="panel border-white-light dark:border-[#1b2e4b] bg-white dark:bg-[#191e3a] p-10 rounded-lg text-center animate__animated animate__fadeIn max-w-lg mx-auto shadow-lg">
   <div
-    class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg animate-bounce bg-primary shadow-primary/30">
+    class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 text-white shadow-lg bg-primary shadow-primary/30">
     <svg class="w-10 h-10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
       <polyline points="20 6 9 17 4 12"></polyline>
     </svg>

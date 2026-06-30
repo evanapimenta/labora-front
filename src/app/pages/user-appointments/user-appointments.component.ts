@@ -197,16 +197,18 @@ export class UserAppointmentsComponent implements OnInit {
       title: 'Cancelar agendamento?',
       text: `Deseja realmente cancelar o agendamento de ${appointment.testName}?`,
       icon: 'warning',
+      iconColor: '#e7515a',
       showCancelButton: true,
-      confirmButtonColor: '#e01a53',
-      cancelButtonColor: '#aaa',
       confirmButtonText: 'Sim, cancelar',
       cancelButtonText: 'Voltar',
+      buttonsStyling: false,
       customClass: {
-        confirmButton: 'btn btn-primary px-4 py-2',
-        cancelButton: 'btn btn-outline-secondary px-4 py-2 ml-2'
-      },
-      buttonsStyling: true
+        popup: 'sweet-alerts dark:bg-[#191e3a] dark:text-white rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-xl font-sans',
+        title: 'text-lg font-bold text-gray-800 dark:text-white-light font-sans',
+        htmlContainer: 'text-sm font-semibold text-gray-500 dark:text-gray-400 mt-2 font-sans',
+        confirmButton: 'btn btn-danger px-6 h-10 font-bold text-xs rounded-xl shadow-md shadow-danger/15 hover:-translate-y-0.5 transition-transform cursor-pointer',
+        cancelButton: 'btn btn-outline-dark px-6 h-10 font-bold text-xs rounded-xl hover:-translate-y-0.5 transition-transform cursor-pointer ml-3'
+      }
     }).then((result) => {
       if (result.isConfirmed) {
         this.cancelAppointment(appointment.id);
