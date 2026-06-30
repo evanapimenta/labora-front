@@ -1,26 +1,26 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 animate__animated animate__fadeIn">
     <!-- Hero Slider -->
     <div class="lg:col-span-2">
-        <div class="panel p-0 overflow-hidden border-0 h-[340px] lg:h-[370px] rounded-2xl shadow-elegant">
+        <div class="panel p-0 overflow-hidden border-0 h-[220px] sm:h-[280px] lg:h-[370px] rounded-2xl shadow-elegant">
             <swiper-container
+                #swiperRef
                 class="block h-full w-full"
-                slides-per-view="1"
-                navigation="true"
-                pagination-clickable="true"
-                pagination="true"
-                loop="true"
+                init="false"
             >
                 <swiper-slide *ngFor="let s of slides" class="h-full w-full">
-                    <div [class]="'h-full w-full flex items-center justify-between px-8 sm:px-12 md:px-16 relative overflow-hidden ' + s.bgColor">
+                    <div [class]="'h-full w-full flex items-center px-6 pb-8 sm:px-12 sm:pb-0 md:px-16 relative overflow-hidden ' + s.bgColor">
                         <!-- Subtle decorative gradient overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-white/10 pointer-events-none"></div>
+                        <div class="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-white/10 pointer-events-none z-10"></div>
+
+                        <!-- Right Illustration positioned as background -->
+                        <img [src]="s.image" alt="banner" class="absolute right-0 bottom-0 h-full max-h-full w-auto object-contain object-right-bottom select-none z-0 pointer-events-none transition-all duration-300 opacity-35 sm:opacity-90 dark:opacity-20 sm:dark:opacity-75" />
 
                         <!-- Left Text Content -->
-                        <div class="flex-1 text-left z-10 flex flex-col justify-center max-w-[65%] select-none pr-4">
-                            <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-4xl font-extrabold text-white leading-tight mb-3 tracking-wide drop-shadow-sm">
+                        <div class="relative z-10 text-left flex flex-col justify-center max-w-full sm:max-w-[70%] md:max-w-[60%] select-none pr-4">
+                            <h2 class="text-xl sm:text-3xl md:text-4xl font-extrabold text-white leading-tight mb-1.5 sm:mb-3 tracking-wide drop-shadow-sm">
                                 {{ s.title }}
                             </h2>
-                            <p class="text-xs sm:text-base lg:text-lg text-white/95 leading-relaxed mb-6 font-medium drop-shadow-sm">
+                            <p class="text-xs sm:text-base lg:text-lg text-white/95 leading-relaxed mb-3 sm:mb-6 font-medium drop-shadow-sm">
                                 {{ s.description }}
                             </p>
                             <div>
@@ -44,11 +44,6 @@
                                 </ng-template>
                             </div>
                         </div>
-
-                        <!-- Right Illustration -->
-                        <div class="w-[30%] h-full flex items-end justify-end relative select-none z-10">
-                            <img [src]="s.image" alt="banner" class="max-h-[92%] max-w-[130%] object-contain object-right-bottom transform translate-y-1 translate-x-2" />
-                        </div>
                     </div>
                 </swiper-slide>
             </swiper-container>
@@ -63,11 +58,17 @@
                     <span class="w-1 h-5 bg-mainGradient rounded-full"></span>
                     Próximos Exames
                 </h4>
-                <span *ngIf="agendamentos.length > 0" class="chip bg-primary/10 text-primary">{{ agendamentos.length }}</span>
+                <span *ngIf="!agendamentosLoading && agendamentos.length > 0" class="chip bg-primary/10 text-primary">{{ agendamentos.length }}</span>
+            </div>
+
+            <!-- Loading State -->
+            <div *ngIf="agendamentosLoading" class="flex-1 flex flex-col items-center justify-center py-12 animate__animated animate__fadeIn">
+                <div class="w-9 h-9 rounded-full border-3 border-primary/20 border-t-primary animate-spin"></div>
+                <p class="text-xs font-semibold text-gray-500 mt-3">Carregando agendamentos...</p>
             </div>
 
             <!-- List wrapper -->
-            <div class="flex-1 flex flex-col gap-3 overflow-y-auto pr-1 -mr-1" *ngIf="agendamentos.length > 0">
+            <div class="flex-1 flex flex-col gap-3 overflow-y-auto pr-1 -mr-1" *ngIf="!agendamentosLoading && agendamentos.length > 0">
                 <div class="group flex gap-3 p-3 rounded-xl hover:bg-primary/[0.03] dark:hover:bg-white/[0.02] border border-transparent hover:border-primary/10 transition-all duration-200" *ngFor="let a of agendamentos">
                     <div class="flex flex-col items-center justify-center px-2.5 text-gray-400 min-w-[64px] bg-gradient-to-br from-primary/5 to-primary/10 dark:from-primary/10 dark:to-primary/5 rounded-xl py-2.5">
                         <div class="text-[10px] tracking-[0.2em] font-extrabold uppercase text-primary">{{ formatDate(a.scheduledFor).mes }}</div>
@@ -95,7 +96,7 @@
             </div>
 
             <!-- Empty State -->
-            <div class="flex-1 flex flex-col items-center justify-center py-8 text-center" *ngIf="agendamentos.length === 0">
+            <div class="flex-1 flex flex-col items-center justify-center py-8 text-center" *ngIf="!agendamentosLoading && agendamentos.length === 0">
                 <div class="w-16 h-16 rounded-2xl bg-primary/5 text-primary/60 flex items-center justify-center mb-3">
                     <icon-laboratory class="w-8 h-8"></icon-laboratory>
                 </div>
@@ -114,9 +115,15 @@
                         <span class="w-1 h-5 bg-mainGradient rounded-full"></span>
                         Resultados Disponíveis
                     </h4>
-                    <button class="btn-aux">Ver Todos</button>
+                    <a routerLink="/appointments" [queryParams]="{ tab: 'concluidos' }" class="btn-aux">Ver Todos</a>
                 </div>
-                <div class="divide-y divide-gray-100 dark:divide-[#1b2e4b]" *ngIf="resultados.length > 0">
+                <!-- Loading State -->
+                <div *ngIf="resultadosLoading" class="flex flex-col items-center justify-center py-12 animate__animated animate__fadeIn">
+                    <div class="w-9 h-9 rounded-full border-3 border-primary/20 border-t-primary animate-spin"></div>
+                    <p class="text-xs font-semibold text-gray-500 mt-3">Carregando resultados...</p>
+                </div>
+
+                <div class="divide-y divide-gray-100 dark:divide-[#1b2e4b]" *ngIf="!resultadosLoading && resultados.length > 0">
                     <div class="py-3.5 flex items-start justify-between group" *ngFor="let r of resultados">
                         <div class="flex gap-3 min-w-0">
                             <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-primary/10 to-darkPurple/10 text-primary flex items-center justify-center flex-shrink-0 group-hover:scale-105 transition-transform" aria-hidden="true">
@@ -140,7 +147,7 @@
                 </div>
 
                 <!-- Empty State -->
-                <div class="flex flex-col items-center justify-center py-12 text-center" *ngIf="resultados.length === 0">
+                <div class="flex flex-col items-center justify-center py-12 text-center" *ngIf="!resultadosLoading && resultados.length === 0">
                     <div class="w-16 h-16 rounded-2xl bg-primary/5 text-primary/60 flex items-center justify-center mb-3">
                         <icon-file class="w-8 h-8"></icon-file>
                     </div>
@@ -248,20 +255,12 @@
 </div>
 
 <!-- Modal de Preparo -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300"
-    [class.opacity-0]="!isPreparoModalOpen"
-    [class.pointer-events-none]="!isPreparoModalOpen"
-    [class.opacity-100]="isPreparoModalOpen"
->
+<div *ngIf="isPreparoModalOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-0 animate__animated animate__fadeIn" style="animation-duration: 250ms;">
     <!-- Overlay -->
-    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="closePreparoModal()"></div>
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" (click)="closePreparoModal()"></div>
 
     <!-- Modal Panel -->
-    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 scale-95"
-         [class.scale-100]="isPreparoModalOpen"
-         [class.translate-y-0]="isPreparoModalOpen"
-         [class.translate-y-4]="!isPreparoModalOpen"
-    >
+    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform scale-100 translate-y-0">
         <!-- Modal Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#1b2e4b]">
             <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
@@ -298,20 +297,12 @@
 </div>
 
 <!-- Modal de Reagendamento -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300"
-    [class.opacity-0]="!isRescheduleModalOpen"
-    [class.pointer-events-none]="!isRescheduleModalOpen"
-    [class.opacity-100]="isRescheduleModalOpen"
->
+<div *ngIf="isRescheduleModalOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-0 animate__animated animate__fadeIn" style="animation-duration: 250ms;">
     <!-- Overlay -->
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" (click)="closeRescheduleModal()"></div>
 
     <!-- Modal Panel -->
-    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 scale-95"
-         [class.scale-100]="isRescheduleModalOpen"
-         [class.translate-y-0]="isRescheduleModalOpen"
-         [class.translate-y-4]="!isRescheduleModalOpen"
-    >
+    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform scale-100 translate-y-0">
         <!-- Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#1b2e4b]">
             <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">
@@ -399,20 +390,12 @@
 </div>
 
 <!-- Modal de Suporte -->
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-0 transition-opacity duration-300"
-    [class.opacity-0]="!isSupportModalOpen"
-    [class.pointer-events-none]="!isSupportModalOpen"
-    [class.opacity-100]="isSupportModalOpen"
->
+<div *ngIf="isSupportModalOpen" class="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-0 animate__animated animate__fadeIn" style="animation-duration: 250ms;">
     <!-- Overlay -->
-    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" (click)="closeSupportModal()"></div>
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" (click)="closeSupportModal()"></div>
 
     <!-- Modal Panel -->
-    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform transition-all duration-300 scale-95"
-         [class.scale-100]="isSupportModalOpen"
-         [class.translate-y-0]="isSupportModalOpen"
-         [class.translate-y-4]="!isSupportModalOpen"
-    >
+    <div class="relative bg-white dark:bg-[#0e1726] rounded-2xl shadow-xl w-full max-w-md transform scale-100 translate-y-0">
         <!-- Modal Header -->
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-[#1b2e4b]">
             <h3 class="text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2">

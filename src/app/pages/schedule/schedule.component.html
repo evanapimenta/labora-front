@@ -105,7 +105,13 @@
       </button>
     </div>
 
-    <div class="mb-6">
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex flex-col items-center justify-center py-20 animate__animated animate__fadeIn">
+      <div class="w-12 h-12 rounded-full border-4 border-primary/20 border-t-primary animate-spin"></div>
+      <p class="text-sm font-semibold text-gray-500 dark:text-gray-400 mt-4">Carregando exames disponíveis...</p>
+    </div>
+
+    <div *ngIf="!loading" class="mb-6">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate__animated animate__fadeIn">
         <app-exam-card *ngFor="let exam of pagedExams" [exam]="exam" [isSelected]="selectedExam === exam.name"
           (select)="selectExam(exam)" (viewDetails)="openDetails(exam)">
@@ -478,8 +484,8 @@
 
   <ng-template #modalBody>
     <div class="space-y-6 pt-2">
-      <!-- Categoria, Estimativa & Preço -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <!-- Grid de 2 Colunas para Métricas Chave -->
+      <div class="grid grid-cols-2 gap-4">
         <!-- Categoria -->
         <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#0e1726]/40 border border-gray-100 dark:border-gray-800/40">
           <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide block mb-1">Categoria</span>
@@ -493,13 +499,26 @@
 
         <!-- Estimativa de resultado -->
         <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#0e1726]/40 border border-gray-100 dark:border-gray-800/40">
-          <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide block mb-1">Estimativa de Resultado</span>
+          <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide block mb-1">Resultado</span>
           <div class="flex items-center gap-1.5 text-sm font-bold text-gray-700 dark:text-white-light">
             <svg class="w-4.5 h-4.5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
             <span>{{ selectedExamForDetails?.estimatedResultTime || 'Não informado' }}</span>
+          </div>
+        </div>
+
+        <!-- Tipo de Amostra -->
+        <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#0e1726]/40 border border-gray-100 dark:border-gray-800/40">
+          <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide block mb-1">Amostra</span>
+          <div class="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-white-light">
+            <svg class="w-4.5 h-4.5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5h0c-1.4 0-2.5-1.1-2.5-2.5V2"></path>
+              <path d="M8.5 2h7"></path>
+              <path d="M9.5 12h5"></path>
+            </svg>
+            <span>{{ selectedExamForDetails?.sampleType || 'Não informado' }}</span>
           </div>
         </div>
 
@@ -516,19 +535,6 @@
             </svg>
             <span>{{ selectedExamForDetails?.price ? 'R$ ' + selectedExamForDetails.price.toFixed(2).replace('.', ',') : 'Não informado' }}</span>
           </div>
-        </div>
-      </div>
-
-      <!-- Tipo de Amostra -->
-      <div class="p-4 rounded-xl bg-gray-50 dark:bg-[#0e1726]/40 border border-gray-100 dark:border-gray-800/40">
-        <span class="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide block mb-1">Tipo de Amostra</span>
-        <div class="flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-white-light">
-          <svg class="w-4.5 h-4.5 text-primary shrink-0" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <path d="M14.5 2v17.5c0 1.4-1.1 2.5-2.5 2.5h0c-1.4 0-2.5-1.1-2.5-2.5V2"></path>
-            <path d="M8.5 2h7"></path>
-            <path d="M9.5 12h5"></path>
-          </svg>
-          <span>{{ selectedExamForDetails?.sampleType || 'Não informado' }}</span>
         </div>
       </div>
 

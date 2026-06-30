@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Inject, PLATFORM_ID } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ScheduleController } from '../../core/controllers/schedule.controller';
 import { NgxCustomModalComponent } from 'ngx-custom-modal';
 import { NotificationService } from '../../core/services/notification.service';
@@ -17,11 +17,13 @@ import Swal from 'sweetalert2';
 export class UserAppointmentsComponent implements OnInit {
   @ViewChild('preparoModal') preparoModal!: any;
   @ViewChild('detailsModal') detailsModal!: any;
+  @ViewChild('cancelConfirmModal') cancelConfirmModal!: any;
 
   appointments: any[] = [];
   filteredAppointments: any[] = [];
   selectedExamForPreparo: any = null;
   selectedAppointmentForDetails: any = null;
+  selectedAppointmentForCancel: any = null;
   
   isBrowser = false;
   loading = false;
@@ -37,12 +39,18 @@ export class UserAppointmentsComponent implements OnInit {
     private scheduleController: ScheduleController,
     private notificationService: NotificationService,
     public router: Router,
+    private route: ActivatedRoute,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe(params => {
+      if (params['tab']) {
+        this.activeTab = params['tab'];
+      }
+    });
     this.loadAppointments();
   }
 
@@ -193,27 +201,25 @@ export class UserAppointmentsComponent implements OnInit {
   }
 
   confirmCancel(appointment: any): void {
-    Swal.fire({
-      title: 'Cancelar agendamento?',
-      text: `Deseja realmente cancelar o agendamento de ${appointment.testName}?`,
-      icon: 'warning',
-      iconColor: '#e7515a',
-      showCancelButton: true,
-      confirmButtonText: 'Sim, cancelar',
-      cancelButtonText: 'Voltar',
-      buttonsStyling: false,
-      customClass: {
-        popup: 'sweet-alerts dark:bg-[#191e3a] dark:text-white rounded-2xl border border-gray-100 dark:border-gray-800 p-6 shadow-xl font-sans',
-        title: 'text-lg font-bold text-gray-800 dark:text-white-light font-sans',
-        htmlContainer: 'text-sm font-semibold text-gray-500 dark:text-gray-400 mt-2 font-sans',
-        confirmButton: 'btn btn-danger px-6 h-10 font-bold text-xs rounded-xl shadow-md shadow-danger/15 hover:-translate-y-0.5 transition-transform cursor-pointer',
-        cancelButton: 'btn btn-outline-dark px-6 h-10 font-bold text-xs rounded-xl hover:-translate-y-0.5 transition-transform cursor-pointer ml-3'
-      }
-    }).then((result) => {
-      if (result.isConfirmed) {
-        this.cancelAppointment(appointment.id);
-      }
-    });
+    this.selectedAppointmentForCancel = appointment;
+    if (this.isBrowser && this.cancelConfirmModal) {
+      this.cancelConfirmModal.open();
+    }
+  }
+
+  closeCancelModal(): void {
+    if (this.isBrowser && this.cancelConfirmModal) {
+      this.cancelConfirmModal.close();
+    }
+    this.selectedAppointmentForCancel = null;
+  }
+
+  executeCancel(): void {
+    if (this.selectedAppointmentForCancel) {
+      const id = this.selectedAppointmentForCancel.id;
+      this.closeCancelModal();
+      this.cancelAppointment(id);
+    }
   }
 
   cancelAppointment(id: string): void {

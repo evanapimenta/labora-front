@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { IconMailComponent } from '../../../icons/icon-mail';
 import { IconLockDotsComponent } from '../../../icons/icon-lock-dots';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
@@ -11,7 +12,7 @@ import { environment } from '../../../../../environment';
 @Component({
   selector: 'app-sign-in',
   standalone: true,
-  imports: [RouterLink ,IconMailComponent, IconLockDotsComponent, ReactiveFormsModule, FormsModule, ThemeToggleComponent],
+  imports: [CommonModule, RouterLink ,IconMailComponent, IconLockDotsComponent, ReactiveFormsModule, FormsModule, ThemeToggleComponent],
   templateUrl: './sign-in.component.html',
   styleUrl: './sign-in.component.css'
 })
@@ -33,6 +34,7 @@ export class SignInComponent {
     });
   }
 
+  isLoading = false;
   createForm = () => {
     this.form = new UntypedFormGroup({
       email: new FormControl(null, [Validators.required, Validators.email]),
@@ -45,12 +47,14 @@ export class SignInComponent {
     this.notificationService.error('Por favor, preencha o e-mail e a senha corretamente.');
     return;
   }
+  this.isLoading = true;
   this.authController.login(this.form.value).then((resp: any) => {
     this.notificationService.success('Conectado com sucesso!');
     this.router.navigate(['/']);
   }).catch((err: any) => {
     const errorMsg = this.notificationService.getErrorMsg(err);
     this.notificationService.error(errorMsg);
+    this.isLoading = false;
   });
  }
 

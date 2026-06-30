@@ -184,10 +184,10 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply ltr:ml-0 rtl:mr-0;
     }
     .horizontal .sidebar {
-        @apply ltr:-left-[260px] rtl:-right-[260px];
+        @apply ltr:left-0 rtl:right-0;
     }
     .horizontal.toggle-sidebar .sidebar {
-        @apply ltr:left-0 rtl:right-0 lg:ltr:-left-[260px] lg:rtl:-right-[260px];
+        @apply ltr:-left-[260px] rtl:-right-[260px] lg:ltr:-left-[260px] lg:rtl:-right-[260px];
     }
 
     .horizontal .nav-item a div:first-child svg {
@@ -233,18 +233,18 @@ hover:text-primary hover:before:!bg-primary ltr:before:mr-2 rtl:before:ml-2 dark
         @apply ltr:ml-0 rtl:mr-0;
     }
     .vertical .sidebar {
-        @apply ltr:-left-[260px] rtl:-right-[260px] lg:ltr:left-0 lg:rtl:right-0;
+        @apply ltr:left-0 rtl:right-0;
     }
     .vertical.toggle-sidebar .sidebar {
-        @apply ltr:left-0 rtl:right-0 lg:ltr:-left-[260px] lg:rtl:-right-[260px];
+        @apply ltr:-left-[260px] rtl:-right-[260px] lg:ltr:-left-[260px] lg:rtl:-right-[260px];
     }
 
     /* Collapsible vertical layouts */
     .collapsible-vertical .sidebar {
-        @apply hover:w-[260px] ltr:-left-[260px] rtl:-right-[260px] lg:w-[70px] lg:ltr:left-0 lg:rtl:right-0;
+        @apply hover:w-[260px] ltr:left-0 rtl:right-0 lg:w-[70px] lg:ltr:left-0 lg:rtl:right-0;
     }
     .collapsible-vertical.toggle-sidebar .sidebar {
-        @apply ltr:left-0 rtl:right-0;
+        @apply ltr:-left-[260px] rtl:-right-[260px];
     }
     .collapsible-vertical.toggle-sidebar .sidebar {
         @apply lg:w-[260px];

@@ -104,8 +104,8 @@ export class HeaderComponent implements OnInit {
         this.storeData.dispatch({ type: 'toggleTheme', payload: settings.theme });
       }
       if (settings.sidebarCollapsed !== undefined) {
-        // sidebar = true significa sidebarCollapsed = false, logo passamos !sidebarCollapsed
-        this.storeData.dispatch({ type: 'toggleSidebar', payload: !settings.sidebarCollapsed });
+        const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024;
+        this.storeData.dispatch({ type: 'toggleSidebar', payload: isMobile ? false : !settings.sidebarCollapsed });
       }
     }
   }

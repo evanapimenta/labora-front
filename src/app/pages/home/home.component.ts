@@ -1,4 +1,4 @@
-import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, OnInit, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgSelectModule } from '@ng-select/ng-select';
@@ -35,7 +35,33 @@ import { Router } from '@angular/router';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, AfterViewInit {
+  @ViewChild('swiperRef') swiperRef!: ElementRef;
+
+  ngAfterViewInit() {
+    if (typeof window !== 'undefined') {
+      const swiperEl = this.swiperRef.nativeElement;
+      const swiperParams = {
+        slidesPerView: 1,
+        navigation: {
+          enabled: true
+        },
+        pagination: {
+          clickable: true,
+        },
+        loop: true,
+        autoplay: {
+          delay: 4000,
+          disableOnInteraction: false,
+        },
+        grabCursor: true,
+        allowTouchMove: true,
+      };
+      Object.assign(swiperEl, swiperParams);
+      swiperEl.initialize();
+    }
+  }
+
   slides = [
     {
       title: 'Agende seus exames sem enrolação',
@@ -44,7 +70,7 @@ export class HomeComponent implements OnInit {
       buttonLink: '/schedule',
       image: '/assets/Adventure_Illustrations/Laboratory/Laboratory.png',
       bgColor: 'bg-[#4C2A75]',
-      btnClass: 'border-white text-white hover:bg-white hover:text-[#4C2A75]'
+      btnClass: 'bg-primary border-primary text-white hover:bg-transparent hover:text-white'
     },
     {
       title: 'Seus resultados, na palma da mão',
@@ -53,7 +79,7 @@ export class HomeComponent implements OnInit {
       buttonLink: '/appointments',
       image: '/assets/Adventure_Illustrations/Medical Research/Medical Research.png',
       bgColor: 'bg-[#EFBD22]',
-      btnClass: 'border-white text-white hover:bg-white hover:text-[#EFBD22]'
+      btnClass: 'bg-primary border-primary text-white hover:bg-transparent hover:text-white'
     },
     {
       title: 'Suporte fácil ao seu alcance',
@@ -63,7 +89,7 @@ export class HomeComponent implements OnInit {
       isModal: true,
       image: '/assets/Adventure_Illustrations/Medical Care/Medical Care.png',
       bgColor: 'bg-[#E75169]',
-      btnClass: 'border-white text-white hover:bg-white hover:text-[#E75169]'
+      btnClass: 'bg-primary border-primary text-white hover:bg-transparent hover:text-white'
     }
   ];
 
@@ -78,7 +104,9 @@ export class HomeComponent implements OnInit {
   }
 
   agendamentos: any[] = [];
+  agendamentosLoading = false;
   resultados: any[] = [];
+  resultadosLoading = false;
 
   locais: any[] = [];
   locaisLoading = false;
@@ -241,6 +269,8 @@ export class HomeComponent implements OnInit {
   }
 
   loadSchedules() {
+    this.agendamentosLoading = true;
+    this.resultadosLoading = true;
 
     this.scheduleController.getScheduled().subscribe({
       next: (res: any) => {
@@ -248,9 +278,11 @@ export class HomeComponent implements OnInit {
         this.agendamentos = (res || []).sort((a: any, b: any) => {
           return new Date(a.scheduledFor).getTime() - new Date(b.scheduledFor).getTime();
         });
+        this.agendamentosLoading = false;
       },
       error: (err: any) => {
         console.error('Erro ao carregar exames agendados:', err);
+        this.agendamentosLoading = false;
       }
     });
 
@@ -260,9 +292,11 @@ export class HomeComponent implements OnInit {
         this.resultados = (res || []).sort((a: any, b: any) => {
           return new Date(b.scheduledFor).getTime() - new Date(a.scheduledFor).getTime();
         });
+        this.resultadosLoading = false;
       },
       error: (err: any) => {
         console.error('Erro ao carregar exames concluídos:', err);
+        this.resultadosLoading = false;
       }
     });
   }

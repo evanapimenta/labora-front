@@ -262,22 +262,29 @@
 <ngx-custom-modal *ngIf="isBrowser" #preparoModal>
   <ng-template #modalHeader>
     <div class="flex items-center gap-3">
-      <span class="w-1 h-5 bg-primary rounded-full"></span>
-      <h3 class="text-base font-extrabold text-gray-800 dark:text-white-light leading-none">
-        Preparo para {{ selectedExamForPreparo?.name }}
-      </h3>
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+      </div>
+      <div>
+        <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Recomendações e Preparo</span>
+        <h3 class="text-base font-extrabold text-gray-800 dark:text-white-light leading-none mt-1">
+          {{ selectedExamForPreparo?.name }}
+        </h3>
+      </div>
     </div>
   </ng-template>
 
   <ng-template #modalBody>
     <div class="space-y-4 pt-2">
-      <div class="bg-primary/5 rounded-2xl p-5 border border-primary/10 flex gap-4">
-        <div class="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <div class="bg-amber-50/40 dark:bg-amber-950/10 rounded-2xl p-5 border border-amber-100/30 dark:border-amber-900/10 flex gap-4">
+        <div class="w-9 h-9 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
           </svg>
         </div>
-        <div class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line font-medium flex-1">
+        <div class="text-sm text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line font-semibold flex-1">
           {{ selectedExamForPreparo?.preparationInstructions || 'Nenhuma instrução especial de preparação é necessária para este exame.' }}
         </div>
       </div>
@@ -456,6 +463,75 @@
       <button type="button" (click)="closeDetailsModal()"
         class="btn btn-primary px-6 h-10 font-bold text-xs rounded-xl transition-transform hover:-translate-y-0.5 shadow-md shadow-primary/15">
         Fechar
+      </button>
+    </div>
+  </ng-template>
+</ngx-custom-modal>
+
+<!-- Modal de Confirmação de Cancelamento -->
+<ngx-custom-modal *ngIf="isBrowser" #cancelConfirmModal>
+  <ng-template #modalHeader>
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-danger/10 text-danger flex items-center justify-center">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+        </svg>
+      </div>
+      <div>
+        <span class="text-xs font-bold text-danger uppercase tracking-wider">Atenção</span>
+        <h3 class="text-base font-extrabold text-gray-800 dark:text-white-light leading-none mt-1">
+          Cancelar Agendamento?
+        </h3>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #modalBody>
+    <div class="space-y-4 pt-2" *ngIf="selectedAppointmentForCancel">
+      <p class="text-sm text-gray-500 dark:text-gray-400 font-semibold leading-relaxed">
+        Deseja realmente cancelar o agendamento do exame abaixo? Esta ação não poderá ser desfeita.
+      </p>
+      
+      <div class="p-4.5 rounded-2xl bg-gray-50 dark:bg-[#0e1726]/40 border border-gray-100 dark:border-gray-800/40">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1">Exame</span>
+            <div class="text-sm font-extrabold text-primary">
+              {{ selectedAppointmentForCancel.testName }}
+            </div>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1">Unidade</span>
+            <div class="text-sm text-gray-800 dark:text-white-light font-sans">
+              {{ selectedAppointmentForCancel.branchName }}
+            </div>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1">Data e Hora</span>
+            <div class="text-sm text-gray-800 dark:text-white-light font-sans">
+              {{ formatDate(selectedAppointmentForCancel.scheduledFor) }}
+            </div>
+          </div>
+          <div>
+            <span class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest block mb-1">Paciente</span>
+            <div class="text-sm text-gray-800 dark:text-white-light font-sans">
+              {{ selectedAppointmentForCancel.patientName }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #modalFooter>
+    <div class="flex items-center gap-3 justify-end w-full" *ngIf="selectedAppointmentForCancel">
+      <button type="button" (click)="closeCancelModal()"
+        class="btn btn-outline-dark px-6 h-10 font-bold text-xs rounded-xl hover:-translate-y-0.5 transition-transform">
+        Voltar
+      </button>
+      <button type="button" (click)="executeCancel()"
+        class="btn btn-danger px-6 h-10 font-bold text-xs rounded-xl shadow-md shadow-danger/15 hover:-translate-y-0.5 transition-transform flex items-center gap-1.5">
+        Confirmar Cancelamento
       </button>
     </div>
   </ng-template>

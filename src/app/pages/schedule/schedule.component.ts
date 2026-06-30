@@ -256,6 +256,7 @@ export class ScheduleComponent implements OnInit {
 
   loadExams(): void {
     const pageIndex = this.currentPage - 1;
+    this.loading = true;
     this.testController.getAll(pageIndex, this.pageSize, this.examSearchQuery).subscribe({
       next: (res: any) => {
         this.examsData = res.content || [];
@@ -271,9 +272,11 @@ export class ScheduleComponent implements OnInit {
             this.selectExam(matchedExam);
           }
         }
+        this.loading = false;
       },
       error: (err: any) => {
         console.error('Erro ao carregar exames do backend:', err);
+        this.loading = false;
       }
     });
   }

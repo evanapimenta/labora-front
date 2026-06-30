@@ -71,9 +71,10 @@
                                 </span>
                             </div>
                         </div>
-                        <button type="submit"
-                            class="btn bg-mainGradient text-white !mt-6 w-full border-0 uppercase shadow-brand hover:shadow-[0_14px_30px_-10px_rgba(206,81,108,0.55)] tracking-wider h-12">
-                            Entrar
+                        <button type="submit" [disabled]="isLoading"
+                            class="btn bg-mainGradient text-white !mt-6 w-full border-0 uppercase shadow-brand hover:shadow-[0_14px_30px_-10px_rgba(206,81,108,0.55)] tracking-wider h-12 flex items-center justify-center gap-2 disabled:opacity-50">
+                            <span *ngIf="isLoading" class="w-4 h-4 rounded-full border-2 border-white/20 border-t-white animate-spin"></span>
+                            {{ isLoading ? 'Entrando...' : 'Entrar' }}
                         </button>
                     </form>
 

@@ -3,7 +3,7 @@ body.modal-open {
 }
 
 .modal {
-    @apply !z-[52] h-full !items-start overflow-auto !bg-[black]/60 px-4 py-8 opacity-0 transition-opacity duration-300;
+    @apply !z-[10000] h-full !items-start overflow-auto !bg-[black]/60 px-4 py-8 opacity-0 transition-opacity duration-300;
 }
 ngx-custom-modal .modal {
     @apply flex justify-center;
